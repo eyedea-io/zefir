@@ -1,0 +1,68 @@
+#!/usr/bin/env node
+import 'source-map-support/register'
+import express from 'express'
+import parseArgs from 'minimist'
+import { resolve, join } from 'path'
+import { existsSync, readFileSync } from 'fs'
+import pkgUp from 'pkg-up'
+import setup from '../server'
+import { printAndExit } from '../lib/utils'
+
+process.env.NODE_ENV = process.env.NODE_ENV || 'development'
+
+const argv = parseArgs(process.argv.slice(2), {
+  alias: {
+    h: 'help',
+    p: 'port'
+  },
+  boolean: ['h'],
+  default: {
+    p: 3000
+  }
+})
+
+if (argv.help) {
+  console.log(`
+    Description
+      Starts the application in development mode (hot-code reloading, error
+      reporting, etc)
+
+    Usage
+      $ zefir dev <dir> -p <port number>
+
+    <dir> represents where the compiled .zefir folder should go.
+    If no directory is provided, .zefir will be created in the current directory
+
+    Options
+      --port, -p      A port number on which to start the application
+      --help, -h      Displays this message
+  `)
+  process.exit(0)
+}
+
+const dir = resolve(argv._[0] || '.')
+
+const srv = express()
+const outputPath = resolve(process.cwd(), '.build')
+const publicPath = '/'
+
+setup(srv, { outputPath, publicPath })
+
+// Start your srv.
+srv.listen(argv.port, err => {
+  if (err) {
+    if (err.code === 'EADDRINUSE') {
+      let errorMessage = `Port ${argv.port} is already in use.`
+      const pkgAppPath = pkgUp.sync('.')
+      const appPackage = JSON.parse(readFileSync(pkgAppPath, 'utf8'))
+      const nextScript = Object.entries(appPackage.scripts).find(scriptLine => scriptLine[1] === 'zefir')
+      if (nextScript) errorMessage += `\nUse \`npm run ${nextScript[0]} -- -p <some other port>\`.`
+      console.error(errorMessage)
+    } else {
+      console.error(err)
+    }
+    process.nextTick(() => process.exit(1))
+  }
+
+  // console.log(`> Ready on http://localhost:${argv.port}`)
+})

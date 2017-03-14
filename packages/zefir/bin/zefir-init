@@ -1,0 +1,125 @@
+#!/usr/bin/env node
+import { resolve, join, basename } from 'path'
+import parseArgs from 'minimist'
+import { exists, writeFile, mkdir } from 'mz/fs'
+import mkdirp from 'mkdirp-then'
+
+const argv = parseArgs(process.argv.slice(2), {
+  alias: {
+    h: 'help'
+  },
+  boolean: ['h']
+})
+
+if (argv.help) {
+  console.log(`
+    Description
+      Scaffolds a simple project structure to get started quickly
+
+    Usage
+      $ zefir init <dir>
+
+      If no directory is provided the current directory will be used.
+
+    Options
+      --help, -h      Displays this message
+  `)
+
+  process.exit(0)
+}
+
+const dir = resolve(argv._[0] || '.')
+
+exists(dir)
+.then(async present => {
+  if (!present) {
+    await mkdirp(dir)
+  }
+
+  if (!await exists(join(dir, 'package.json'))) {
+    await writeFile(join(dir, 'package.json'), basePackage.replace(/my-app/g, basename(dir)))
+  }
+
+  if (!await exists(join(dir, 'src'))) {
+    await mkdir(join(dir, 'src'))
+  }
+
+  if (!await exists(join(dir, 'src', 'index.js'))) {
+    await writeFile(join(dir, 'src', 'index.js'), basePage)
+  }
+
+  if (!await exists(join(dir, 'src', 'app.store.js'))) {
+    await writeFile(join(dir, 'src', 'app.store.js'), baseStore)
+  }
+
+  if (!await exists(join(dir, 'src', 'app.service.js'))) {
+    await writeFile(join(dir, 'src', 'app.service.js'), baseService)
+  }
+})
+.catch((err) => {
+  console.error(err)
+  process.exit(1)
+})
+
+const basePackage = `{
+  "name": "my-app",
+  "description": "",
+  "dependencies": {
+    "zefir": "beta",
+    "react": "15.4.2",
+    "react-dom": "15.4.2",
+    "mobx": "3.1.5"
+
+  },
+  "scripts": {
+    "dev": "zefir",
+    "build": "zefir build"
+  }
+}`
+
+const basePage = `import {connect} from 'zefir/utils'
+
+const Routes = ({
+  stores: {app: {fullName}},
+  services: {app: {toggleName}},
+}) => {
+  return (
+    <div className="page">
+      Hey: <b>{fullName}</b>
+      <button onClick={toggleName}>Log</button>
+
+      <style jsx>{\`
+        .page {
+          padding: 80px;
+          font-family: Arial;
+        }
+
+        button {
+          padding: 7px 14px;
+          background: #0366d6;
+          border-radius: 3px;
+          border: none;
+          color: #fff;
+        }
+      \`}</style>
+    </div>
+  )
+}
+
+export default connect(Routes)`
+
+const baseStore = `import {observable} from 'mobx'
+
+export default {
+  @observable fullName: 'John Doe'
+}`
+
+const baseService = `import {action} from 'mobx'
+
+export default class App {
+  @action toggleName = () => {
+    const {app} = this.stores
+
+    app.fullName = app.fullName === 'John Doe' ? 'Jane Doe' : 'John Doe'
+  }
+}`

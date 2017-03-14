@@ -1,0 +1,70 @@
+#!/usr/bin/env node
+
+import { resolve } from 'path'
+import express from 'express'
+import parseArgs from 'minimist'
+import setup from '../server'
+import { existsSync } from 'fs'
+
+process.env.NODE_ENV = process.env.NODE_ENV || 'production'
+
+const argv = parseArgs(process.argv.slice(2), {
+  alias: {
+    h: 'help',
+    H: 'hostname',
+    p: 'port'
+  },
+  boolean: ['h'],
+  string: ['H'],
+  default: { p: 3000 }
+})
+
+if (argv.hostname === '') {
+  console.error(`> Provided hostname argument has no value`)
+  process.exit(1)
+}
+
+if (argv.help) {
+  console.log(`
+    Description
+      Starts the application in production mode.
+      The application should be compiled with \`zefir build\` first.
+
+    Usage
+      $ zefir start <dir> -p <port>
+
+    <dir> is the directory that contains the compiled .zefir folder
+    created by running \`zefir build\`.
+    If no directory is provided, the current directory will be assumed.
+
+    Options
+      --port, -p      A port number on which to start the application
+      --hostname, -H  Hostname on which to start the application
+      --help, -h      Displays this message
+  `)
+  process.exit(0)
+}
+
+const dir = resolve(argv._[0] || '.')
+
+if (!existsSync(resolve(dir, '.zefir', 'BUILD_ID'))) {
+  console.error(`> Could not find a valid build in the '.zefir' directory! Try building your app with 'zefir build' before starting the server.`)
+  process.exit(1)
+}
+
+const srv = express()
+const outputPath = resolve(process.cwd(), '<div className="zefira"></div>')
+const publicPath = '/'
+
+setup(srv, { outputPath, publicPath })
+
+srv.listen(argv.port, argv.hostname, err => {
+  if (err) {
+    console.error(err)
+    process.exit(1)
+  }
+
+  if (!process.env.NOW) {
+    console.log(`> Ready on http://${argv.hostname ? argv.hostname : 'localhost'}:${argv.port}`)
+  }
+})
