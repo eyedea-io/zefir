@@ -14,7 +14,7 @@ const addDevMiddlewares = (app, webpackConfig) => {
     clientLogLevel: 'none',
     noInfo: true,
     silent: true,
-    stats: 'none',
+    stats: 'none'
   })
 
   app.use(middleware)

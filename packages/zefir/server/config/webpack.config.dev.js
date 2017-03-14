@@ -9,7 +9,7 @@ import paths from './paths'
 import env from './env'
 import babelQuery from './babel.dev'
 
-const dir = process.cwd();
+const dir = process.cwd()
 
 const projectNodeModules = path.join(dir, 'node_modules')
 const zefirNodeModules = path.join(__dirname, '..', '..', '..', './node_modules')
@@ -43,7 +43,7 @@ module.exports = {
     alias: {
       '_ROOT_': dir,
       'zefir/utils': require.resolve(path.join(__dirname, '..', '..', 'lib', 'utils')),
-      'zefir/router': require.resolve(path.join(__dirname, '..', '..', 'lib', 'router')),
+      'zefir/router': require.resolve(path.join(__dirname, '..', '..', 'lib', 'router'))
     }
   },
   resolveLoader: {
@@ -71,7 +71,7 @@ module.exports = {
   },
   plugins: [
     new webpack.ProvidePlugin({
-      React: 'react',
+      React: 'react'
     }),
     new HtmlWebpackPlugin({
       inject: true,
@@ -88,6 +88,6 @@ module.exports = {
     }),
     new webpack.DefinePlugin(env),
     new webpack.HotModuleReplacementPlugin(),
-    new CaseSensitivePathsPlugin(),
+    new CaseSensitivePathsPlugin()
   ]
 }

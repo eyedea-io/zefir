@@ -19,7 +19,7 @@ const MatchAsGuest = ({
           }}
           />
       ) : (
-        <Component {...props}/>
+        <Component {...props} />
       )
     )}
     />

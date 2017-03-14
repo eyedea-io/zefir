@@ -8,23 +8,18 @@ import WriteFilePlugin from 'write-file-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import FriendlyErrorsWebpackPlugin from 'friendly-errors-webpack-plugin'
 import CaseSensitivePathPlugin from 'case-sensitive-paths-webpack-plugin'
-import paths from '../config/paths'
 import UnlinkFilePlugin from './plugins/unlink-file-plugin'
 import WatchPagesPlugin from './plugins/watch-pages-plugin'
 import JsonPagesPlugin from './plugins/json-pages-plugin'
-import getConfig from '../config'
-import * as babelCore from 'babel-core'
 import findBabelConfig from './babel/find-config'
 
-const defaultPage = join(__dirname, '..', 'index.html');
-const documentPage = join('pages', '_document.js')
+const defaultPage = join(__dirname, '..', 'index.html')
 const defaultPages = [
   '_error.js',
   '_document.js'
 ]
 
 const nextPagesDir = join(__dirname, '..', '..', 'pages')
-const nextNodeModulesDir = join(__dirname, '..', '..', '..', 'node_modules')
 const interpolateNames = new Map(defaultPages.map((p) => {
   return [join(nextPagesDir, p), `dist/pages/${p}`]
 }))
@@ -34,7 +29,6 @@ export default async function createCompiler (dir, { dev = false, quiet = false,
 
   const projectNodeModules = join(dir, 'node_modules')
   const zefirNodeModules = join(__dirname, '..', '..', '..', './node_modules')
-  const config = getConfig(dir)
   const defaultEntries = []
 
   let minChunks
@@ -130,10 +124,6 @@ export default async function createCompiler (dir, { dev = false, quiet = false,
     )
   }
 
-  const nodePathList = (process.env.NODE_PATH || '')
-    .split(process.platform === 'win32' ? ';' : ':')
-    .filter((p) => !!p)
-
   const mainBabelOptions = {
     cacheDirectory: true,
     sourceMaps: dev ? 'both' : false,
@@ -211,7 +201,7 @@ export default async function createCompiler (dir, { dev = false, quiet = false,
       alias: {
         '_ROOT_': dir,
         'zefir/utils': resolve(join(__dirname, '..', '..', 'lib', 'utils')),
-        'zefir/router': resolve(join(__dirname, '..', '..', 'lib', 'router')),
+        'zefir/router': resolve(join(__dirname, '..', '..', 'lib', 'router'))
       }
     },
     resolveLoader: {

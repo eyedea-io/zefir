@@ -1,4 +1,4 @@
-export function isRequired(report, schema, json) { // eslint-disable-line import/prefer-default-export
+export function isRequired (report, schema, json) { // eslint-disable-line import/prefer-default-export
   const originalPath = report.path
 
   if (Array.isArray(schema.required)) {

@@ -1,6 +1,6 @@
 {
   "name": "zefir",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "./dist/server/zefir.js",
   "license": "MIT",
@@ -61,7 +61,6 @@
     "cross-spawn": "5.0.1",
     "coercer": "^1.1.2",
     "compression": "^1.6.2",
-    "css-loader": "0.23.1",
     "css-loader": "0.23.1",
     "del": "2.2.2",
     "express": "^4.14.1",

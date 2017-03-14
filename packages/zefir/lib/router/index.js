@@ -1,11 +1,11 @@
 import {connect} from '../utils'
 import {Route} from 'react-router-dom'
 
-const Match = function({
+const Match = function ({
   component,
   ...rest
 }) {
-  return <Route {...rest} component={connect(component)}/>
+  return <Route {...rest} component={connect(component)} />
 }
 
 export {default as MatchAsMember} from './match-as-member'

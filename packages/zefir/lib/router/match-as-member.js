@@ -15,7 +15,7 @@ const MatchAsMember = ({
       exact={exact}
       render={props => {
         return isLoggedIn ? (
-          <Component {...props}/>
+          <Component {...props} />
         ) : (
           <Redirect
             to={{

@@ -2,11 +2,10 @@
 import 'source-map-support/register'
 import express from 'express'
 import parseArgs from 'minimist'
-import { resolve, join } from 'path'
-import { existsSync, readFileSync } from 'fs'
+import { resolve } from 'path'
+import { readFileSync } from 'fs'
 import pkgUp from 'pkg-up'
 import setup from '../server'
-import { printAndExit } from '../lib/utils'
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 
@@ -40,10 +39,8 @@ if (argv.help) {
   process.exit(0)
 }
 
-const dir = resolve(argv._[0] || '.')
-
 const srv = express()
-const outputPath = resolve(process.cwd(), '.build')
+const outputPath = resolve(argv._[0] || '.zefir')
 const publicPath = '/'
 
 setup(srv, { outputPath, publicPath })

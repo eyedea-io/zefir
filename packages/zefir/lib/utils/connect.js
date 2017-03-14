@@ -3,7 +3,7 @@ import hoistStatics from 'hoist-non-react-statics'
 import formize from './formize'
 import { observer } from 'mobx-react'
 
-export default function connect(ComposedComponent) {
+export default function connect (ComposedComponent) {
   class Connect extends Component {
     static contextTypes = {
       services: PropTypes.object,
@@ -11,7 +11,7 @@ export default function connect(ComposedComponent) {
       router: PropTypes.object
     }
 
-    constructor(props, context) {
+    constructor (props, context) {
       super(props, context)
 
       this.customProps = {
@@ -28,7 +28,7 @@ export default function connect(ComposedComponent) {
       }
     }
 
-    render() {
+    render () {
       return React.createElement(observer(ComposedComponent), this.customProps)
     }
   }

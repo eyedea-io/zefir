@@ -32,7 +32,7 @@ req.keys().forEach(modulePath => {
 export default () => (
   <Provider stores={stores} services={services}>
     <Router>
-      <ConnectedIndex/>
+      <ConnectedIndex />
     </Router>
   </Provider>
 )

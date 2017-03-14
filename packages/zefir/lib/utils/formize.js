@@ -5,7 +5,7 @@ import * as FormRules from './formize.rules'
 import { observer } from 'mobx-react'
 import { extendObservable, observable } from 'mobx'
 
-export default function formize({ formName, fields, schema = {}, permament = true }) {
+export default function formize ({ formName, fields, schema = {}, permament = true }) {
   const validator = new ZSchema({
     customValidator: (Report, Schema, Values) => {
       Object.keys(FormRules).forEach(rule => FormRules[rule](Report, Schema, Values))
@@ -24,7 +24,7 @@ export default function formize({ formName, fields, schema = {}, permament = tru
         stores: PropTypes.object
       }
 
-      constructor(props, context) {
+      constructor (props, context) {
         super(props, context)
 
         if (!formName && permament) {
@@ -73,7 +73,7 @@ export default function formize({ formName, fields, schema = {}, permament = tru
         this.setValue = this.setValue.bind(this)
       }
 
-      setValue(event, val) {
+      setValue (event, val) {
         const isObject = typeof event === 'object'
         const isCheckbox = event.target.type === 'checkbox'
 
@@ -88,7 +88,7 @@ export default function formize({ formName, fields, schema = {}, permament = tru
         }
       }
 
-      submit(event, cb) {
+      submit (event, cb) {
         event.preventDefault(cb)
 
         // Get object with fieldName: fieldValue items.
@@ -97,9 +97,9 @@ export default function formize({ formName, fields, schema = {}, permament = tru
           .reduce((obj, name) => ({
             ...obj,
             [name]:
-              Object.prototype.isPrototypeOf.call(this.form.fields[name], 'checked') ? this.form.fields[name].checked :
-              Object.prototype.isPrototypeOf.call(this.form.fields[name], 'value') ? this.form.fields[name].value :
-              this.form.fields[name].defaultValue
+              Object.prototype.isPrototypeOf.call(this.form.fields[name], 'checked') ? this.form.fields[name].checked
+                : Object.prototype.isPrototypeOf.call(this.form.fields[name], 'value') ? this.form.fields[name].value
+                : this.form.fields[name].defaultValue
           }), {})
 
         const coercedData = coercer(data)
@@ -124,7 +124,7 @@ export default function formize({ formName, fields, schema = {}, permament = tru
         }
       }
 
-      render() {
+      render () {
         return React.createElement(observer(ComposedComponent), {
           ...this.props,
           formize: {
