@@ -1,5 +1,5 @@
-import { tmpdir } from 'os'
-import { join } from 'path'
+import {tmpdir} from 'os'
+import {join} from 'path'
 import fs from 'mz/fs'
 import uuid from 'uuid'
 import del from 'del'
@@ -8,7 +8,7 @@ import replaceCurrentBuild from './replace'
 
 export default async function build (dir) {
   const buildDir = join(tmpdir(), uuid.v4())
-  const compiler = await webpack(dir, { buildDir })
+  const compiler = await webpack(dir, {buildDir})
 
   try {
     await runCompiler(compiler)
@@ -21,13 +21,15 @@ export default async function build (dir) {
   await replaceCurrentBuild(dir, buildDir)
 
   // no need to wait
-  del(buildDir, { force: true })
+  del(buildDir, {force: true})
 }
 
 function runCompiler (compiler) {
   return new Promise((resolve, reject) => {
     compiler.run((err, stats) => {
-      if (err) return reject(err)
+      if (err) {
+        return reject(err)
+      }
 
       const jsonStats = stats.toJson()
       if (jsonStats.errors.length > 0) {

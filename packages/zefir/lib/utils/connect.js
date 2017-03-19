@@ -1,16 +1,10 @@
-import React, { Component, PropTypes } from 'react'
+import React, {Component, PropTypes} from 'react'
 import hoistStatics from 'hoist-non-react-statics'
+import {observer} from 'mobx-react'
 import formize from './formize'
-import { observer } from 'mobx-react'
 
 export default function connect (ComposedComponent) {
   class Connect extends Component {
-    static contextTypes = {
-      services: PropTypes.object,
-      stores: PropTypes.object,
-      router: PropTypes.object
-    }
-
     constructor (props, context) {
       super(props, context)
 
@@ -31,6 +25,12 @@ export default function connect (ComposedComponent) {
     render () {
       return React.createElement(observer(ComposedComponent), this.customProps)
     }
+  }
+
+  Connect.contextTypes = {
+    services: PropTypes.object,
+    stores: PropTypes.object,
+    router: PropTypes.object
   }
 
   let WrappedComponent = hoistStatics(Connect, ComposedComponent)

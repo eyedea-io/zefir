@@ -1,5 +1,3 @@
-process.noDeprecation = true
-
 import path from 'path'
 import webpack from 'webpack'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
@@ -8,6 +6,8 @@ import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin'
 import paths from './paths'
 import env from './env'
 import babelQuery from './babel.dev'
+
+process.noDeprecation = true
 
 const dir = process.cwd()
 
@@ -41,7 +41,8 @@ module.exports = {
       '.jsx'
     ],
     alias: {
-      '_ROOT_': dir,
+      _ROOT_: dir,
+      'zefir/head': require.resolve(path.join(__dirname, '..', '..', 'lib', 'head')),
       'zefir/utils': require.resolve(path.join(__dirname, '..', '..', 'lib', 'utils')),
       'zefir/router': require.resolve(path.join(__dirname, '..', '..', 'lib', 'router'))
     }
@@ -77,7 +78,11 @@ module.exports = {
       inject: true,
       template: path.join(__dirname, '..', 'index.html')
     }),
-    new FriendlyErrorsWebpackPlugin(),
+    new FriendlyErrorsWebpackPlugin({
+      compilationSuccessInfo: {
+        messages: ['Live at: http://localhost:3000']
+      }
+    }),
     new webpack.NamedModulesPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.LoaderOptionsPlugin({

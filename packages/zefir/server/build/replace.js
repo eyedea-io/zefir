@@ -1,5 +1,5 @@
+import {join} from 'path'
 import mv from 'mv'
-import { join } from 'path'
 
 export default async function replaceCurrentBuild (dir, buildDir) {
   const _dir = join(dir, '.zefir')
@@ -9,7 +9,9 @@ export default async function replaceCurrentBuild (dir, buildDir) {
   try {
     await move(_dir, oldDir)
   } catch (err) {
-    if (err.code !== 'ENOENT') throw err
+    if (err.code !== 'ENOENT') {
+      throw err
+    }
   }
   await move(_buildDir, _dir)
   return oldDir

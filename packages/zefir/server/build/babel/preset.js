@@ -1,10 +1,10 @@
 // const relativeResolve = require('../root-module-relative-path').default(require)
 
 const envPlugins = {
-  'development': [
+  development: [
     require.resolve('babel-plugin-transform-react-jsx-source')
   ],
-  'production': [
+  production: [
     require.resolve('babel-plugin-transform-react-remove-prop-types')
   ]
 }
@@ -14,7 +14,7 @@ const plugins = envPlugins[process.env.NODE_ENV] || []
 module.exports = {
   presets: [
     [require.resolve('babel-preset-latest'), {
-      'es2015': { modules: false }
+      es2015: {modules: false}
     }],
     require.resolve('babel-preset-react')
   ],

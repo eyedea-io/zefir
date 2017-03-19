@@ -15,7 +15,9 @@ export function execOnce (fn) {
 }
 
 export function deprecated (fn, message) {
-  if (process.env.NODE_ENV === 'production') return fn
+  if (process.env.NODE_ENV === 'production') {
+    return fn
+  }
 
   let warned = false
   const newFn = function (...args) {
@@ -42,19 +44,7 @@ export function printAndExit (message, code = 1) {
   process.exit(code)
 }
 
-export async function loadGetInitialProps (Component, ctx) {
-  if (!Component.getInitialProps) return {}
-
-  const props = await Component.getInitialProps(ctx)
-  if (!props && (!ctx.res || !ctx.res.finished)) {
-    const compName = Component.displayName || Component.name
-    const message = `"${compName}.getInitialProps()" should resolve to an object. But found "${props}" instead.`
-    throw new Error(message)
-  }
-  return props
-}
-
 export function getLocationOrigin () {
-  const { protocol, hostname, port } = window.location
+  const {protocol, hostname, port} = window.location
   return `${protocol}//${hostname}${port ? ':' + port : ''}`
 }

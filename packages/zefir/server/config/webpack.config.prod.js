@@ -12,7 +12,7 @@ if (env['process.env.NODE_ENV'] !== '"production"') {
   throw new Error('Production builds must have NODE_ENV=production.')
 }
 
-const homepagePath = require(paths.appPackageJson).homepage // eslint-disable-line import/no-dynamic-require
+const homepagePath = require(paths.appPackageJson).homepage
 
 var publicPath = homepagePath ? url.parse(homepagePath).pathname : '/'
 
@@ -56,32 +56,6 @@ module.exports = {
         include: paths.appSrc,
         loader: 'babel-loader',
         options: babelQuery
-      },
-      {
-        test: /\.css$/,
-        include: paths.appSrc,
-        exclude: paths.stylesSrc,
-        loader: ExtractTextPlugin.extract({
-          fallbackLoader: 'style-loader',
-          loader: 'css-loader?modules&minimize&-autoprefixer&importLoaders=1',
-          publicPath: '/dist'
-        })
-      },
-      {
-        test: /\.css$/,
-        include: paths.stylesSrc,
-        loader: ExtractTextPlugin.extract({
-          fallbackLoader: 'style-loader',
-          loader: 'css-loader?minimize'
-        })
-      },
-      {
-        test: /\.css$/,
-        include: /node_modules/,
-        use: [
-          { loader: 'style-loader' },
-          { loader: 'css-loader' }
-        ]
       },
       {
         test: /\.json$/,
@@ -130,15 +104,15 @@ module.exports = {
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
-        screw_ie8: true, // eslint-disable-line camelcase
+        screw_ie8: true,
         warnings: false
       },
       mangle: {
-        screw_ie8: true // eslint-disable-line camelcase
+        screw_ie8: true
       },
       output: {
         comments: false,
-        screw_ie8: true // eslint-disable-line camelcase
+        screw_ie8: true
       }
     }),
     new ExtractTextPlugin({

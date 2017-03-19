@@ -1,11 +1,11 @@
-import React, { PropTypes } from 'react'
-import { Redirect, Route } from 'react-router-dom'
+import React, {PropTypes} from 'react'
+import {Redirect, Route} from 'react-router-dom'
 import connect from '../utils/connect'
 
 const MatchAsMember = ({
   redirectTo = '/',
   component: Component,
-  store: { user: { isLoggedIn } },
+  store: {user: {isLoggedIn}},
   path,
   exact
 }) => {
@@ -20,7 +20,7 @@ const MatchAsMember = ({
           <Redirect
             to={{
               pathname: redirectTo,
-              state: { from: props.location }
+              state: {from: props.location}
             }}
             />
         )

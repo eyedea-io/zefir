@@ -1,7 +1,5 @@
-// process.noDeprecation = true
-
-import { resolve, join } from 'path'
-import { createHash } from 'crypto'
+import {resolve, join} from 'path'
+import {createHash} from 'crypto'
 import webpack from 'webpack'
 import glob from 'glob-promise'
 import WriteFilePlugin from 'write-file-webpack-plugin'
@@ -13,6 +11,8 @@ import WatchPagesPlugin from './plugins/watch-pages-plugin'
 import JsonPagesPlugin from './plugins/json-pages-plugin'
 import findBabelConfig from './babel/find-config'
 
+process.noDeprecation = true
+
 const defaultPage = join(__dirname, '..', 'index.html')
 const defaultPages = [
   '_error.js',
@@ -20,11 +20,11 @@ const defaultPages = [
 ]
 
 const nextPagesDir = join(__dirname, '..', '..', 'pages')
-const interpolateNames = new Map(defaultPages.map((p) => {
+const interpolateNames = new Map(defaultPages.map(p => {
   return [join(nextPagesDir, p), `dist/pages/${p}`]
 }))
 
-export default async function createCompiler (dir, { dev = false, quiet = false, buildDir } = {}) {
+export default async function createCompiler (dir, {dev = false, quiet = false, buildDir} = {}) {
   dir = resolve(dir)
 
   const projectNodeModules = join(dir, 'node_modules')
@@ -39,7 +39,7 @@ export default async function createCompiler (dir, { dev = false, quiet = false,
       'main.js': require.resolve('../root')
     }
 
-    const pages = await glob('pages/**/*.js', { cwd: dir })
+    const pages = await glob('pages/**/*.js', {cwd: dir})
     for (const p of pages) {
       entries[join('bundles', p)] = [...defaultEntries, `./${p}?entry`]
     }
@@ -61,7 +61,7 @@ export default async function createCompiler (dir, { dev = false, quiet = false,
     new webpack.LoaderOptionsPlugin({
       options: {
         context: dir,
-        customInterpolateName (url, name, opts) {
+        customInterpolateName (url) {
           return interpolateNames.get(this.resourcePath) || url
         }
       }
@@ -118,7 +118,7 @@ export default async function createCompiler (dir, { dev = false, quiet = false,
         'process.env.NODE_ENV': JSON.stringify('production')
       }),
       new webpack.optimize.UglifyJsPlugin({
-        compress: { warnings: false },
+        compress: {warnings: false},
         sourceMap: false
       })
     )
@@ -137,7 +137,7 @@ export default async function createCompiler (dir, { dev = false, quiet = false,
     // It's possible to turn off babelrc support via babelrc itself.
     // In that case, we should add our default preset.
     // That's why we need to do this.
-    const { options } = externalBabelConfig
+    const {options} = externalBabelConfig
     mainBabelOptions.babelrc = options.babelrc !== false
   } else {
     mainBabelOptions.babelrc = false
@@ -174,18 +174,17 @@ export default async function createCompiler (dir, { dev = false, quiet = false,
     options: mainBabelOptions
   }])
 
-  let webpackConfig = {
+  const webpackConfig = {
     context: dir,
     entry,
     output: {
       path: join(buildDir || dir, '.zefir'),
       filename: '[name]',
-      libraryTarget: 'commonjs2',
       publicPath: '/',
       strictModuleExceptionHandling: true,
-      devtoolModuleFilenameTemplate ({ resourcePath }) {
+      devtoolModuleFilenameTemplate ({resourcePath}) {
         const hash = createHash('sha1')
-        hash.update(Date.now() + '')
+        hash.update(String(Date.now()))
         const id = hash.digest('hex').slice(0, 7)
 
         // append hash id for cache busting
@@ -199,7 +198,7 @@ export default async function createCompiler (dir, { dev = false, quiet = false,
         zefirNodeModules
       ],
       alias: {
-        '_ROOT_': dir,
+        _ROOT_: dir,
         'zefir/utils': resolve(join(__dirname, '..', '..', 'lib', 'utils')),
         'zefir/router': resolve(join(__dirname, '..', '..', 'lib', 'router'))
       }
@@ -216,7 +215,7 @@ export default async function createCompiler (dir, { dev = false, quiet = false,
       rules
     },
     devtool: dev ? 'inline-source-map' : false,
-    performance: { hints: false }
+    performance: {hints: false}
   }
 
   // if (config.webpack) {

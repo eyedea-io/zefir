@@ -1,21 +1,16 @@
 import React from 'react'
-// App routing
-import { BrowserRouter as Router } from 'react-router-dom'
-// Provider inserts store and services into context of childrens
-import Provider from './provider'
-// App routes
+import {BrowserRouter as Router} from 'react-router-dom'
 import Index from 'src'
-
-import {connect} from 'zefir/utils'
+import {connect} from '../lib/utils'
+import Provider from './provider'
 
 const ConnectedIndex = connect(Index)
-
-let req
 
 const stores = {}
 const services = {}
 
-req = require.context('_ROOT_/src', true, /\.(store|service)\.js$/)
+const req = require.context('_ROOT_/src', true, /\.(store|service)\.js$/)
+
 req.keys().forEach(modulePath => {
   const filename = modulePath.split('/').pop()
   const [name, type] = filename.match(/(.*)\.js$/)[1].split('.')

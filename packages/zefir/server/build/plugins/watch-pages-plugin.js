@@ -1,4 +1,4 @@
-import { resolve, join } from 'path'
+import {resolve, join} from 'path'
 
 export default class WatchPagesPlugin {
   constructor (dir) {
@@ -6,7 +6,7 @@ export default class WatchPagesPlugin {
   }
 
   apply (compiler) {
-    compiler.plugin('compilation', (compilation) => {
+    compiler.plugin('compilation', compilation => {
       compilation.plugin('optimize-assets', (assets, callback) => {
         // transpile pages/_document.js and descendants,
         // but don't need the bundle file
@@ -25,4 +25,3 @@ export default class WatchPagesPlugin {
     })
   }
 }
-

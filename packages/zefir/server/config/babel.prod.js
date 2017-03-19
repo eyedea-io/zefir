@@ -3,7 +3,7 @@ module.exports = {
   babelrc: false,
   presets: [
     // Latest stable ECMAScript features
-    [require.resolve('babel-preset-latest'), { modules: false }],
+    [require.resolve('babel-preset-latest'), {modules: false}],
     // JSX, Flow
     require.resolve('babel-preset-react')
   ],

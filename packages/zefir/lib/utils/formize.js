@@ -1,11 +1,11 @@
-import React, { Component, PropTypes } from 'react'
+import React, {Component, PropTypes} from 'react'
 import coercer from 'coercer'
 import ZSchema from 'z-schema'
+import {observer} from 'mobx-react'
+import {extendObservable, observable} from 'mobx'
 import * as FormRules from './formize.rules'
-import { observer } from 'mobx-react'
-import { extendObservable, observable } from 'mobx'
 
-export default function formize ({ formName, fields, schema = {}, permament = true }) {
+export default function formize ({formName, fields, schema = {}, permament = true}) {
   const validator = new ZSchema({
     customValidator: (Report, Schema, Values) => {
       Object.keys(FormRules).forEach(rule => FormRules[rule](Report, Schema, Values))
@@ -15,8 +15,8 @@ export default function formize ({ formName, fields, schema = {}, permament = tr
   return function (ComposedComponent) {
     class Form extends Component {
       static propTypes = {
-        services: PropTypes.object, // eslint-disable-line react/no-unused-prop-types
-        stores: PropTypes.object // eslint-disable-line react/no-unused-prop-types
+        services: PropTypes.object,
+        stores: PropTypes.object
       }
 
       static contextTypes = {
@@ -32,7 +32,7 @@ export default function formize ({ formName, fields, schema = {}, permament = tr
         }
 
         if (!context.stores.forms) {
-          extendObservable(context.stores, { forms: observable.map() })
+          extendObservable(context.stores, {forms: observable.map()})
         }
 
         const form = {
@@ -43,7 +43,7 @@ export default function formize ({ formName, fields, schema = {}, permament = tr
 
         switch (typeof fields) {
           case 'function':
-            form.fields = fields({ ...props, ...context })
+            form.fields = fields({...props, ...context})
             break
           case 'object':
             form.fields = fields
@@ -113,7 +113,7 @@ export default function formize ({ formName, fields, schema = {}, permament = tr
           this.form.errors = {}
 
           if (errors) {
-            errors.forEach(({ path, message }) => {
+            errors.forEach(({path, message}) => {
               this.form.errors[path.substr(2)] = message
             })
           }

@@ -1,5 +1,5 @@
+import {Route, Switch, Link} from 'react-router-dom'
 import {connect} from '../utils'
-import {Route} from 'react-router-dom'
 
 const Match = function ({
   component,
@@ -10,5 +10,4 @@ const Match = function ({
 
 export {default as MatchAsMember} from './match-as-member'
 export {default as MatchAsGuest} from './match-as-guest'
-export {Switch} from 'react-router-dom'
-export {Match}
+export {Switch, Link, Match}

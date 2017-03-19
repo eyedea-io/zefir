@@ -1,6 +1,6 @@
-import 'babel-polyfill' // eslint-disable-line import/no-unassigned-import
+import 'babel-polyfill'
 
 window.Promise = require('promise/lib/es6-extensions')
 
 // fetch() polyfill for making API calls.
-require('whatwg-fetch') // eslint-disable-line import/no-unassigned-import
+require('whatwg-fetch')

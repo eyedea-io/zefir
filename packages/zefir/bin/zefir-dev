@@ -60,6 +60,4 @@ srv.listen(argv.port, err => {
     }
     process.nextTick(() => process.exit(1))
   }
-
-  // console.log(`> Ready on http://localhost:${argv.port}`)
 })

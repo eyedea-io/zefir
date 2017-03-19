@@ -1,11 +1,11 @@
-import React, { PropTypes } from 'react'
-import { Redirect, Route } from 'react-router-dom'
+import React, {PropTypes} from 'react'
+import {Redirect, Route} from 'react-router-dom'
 import connect from '../utils/connect'
 
 const MatchAsGuest = ({
   redirectTo = '/dashboard',
   component: Component,
-  store: { user: { isLoggedIn } },
+  store: {user: {isLoggedIn}},
   ...rest
 }) => (
   <Route
@@ -15,7 +15,7 @@ const MatchAsGuest = ({
         <Redirect
           to={{
             pathname: redirectTo,
-            state: { from: props.location }
+            state: {from: props.location}
           }}
           />
       ) : (

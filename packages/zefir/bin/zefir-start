@@ -53,7 +53,7 @@ if (!existsSync(resolve(dir, '.zefir', 'BUILD_ID'))) {
 }
 
 const srv = express()
-const outputPath = resolve(process.cwd(), '<div className="zefira"></div>')
+const outputPath = resolve(argv._[0] || '.zefir')
 const publicPath = '/'
 
 setup(srv, { outputPath, publicPath })

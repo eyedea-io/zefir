@@ -1,28 +1,18 @@
-import { Component, PropTypes, Children } from 'react'
+import {Component, PropTypes, Children} from 'react'
 
-export default class Provider extends Component {
-  static propTypes = {
-    stores: PropTypes.object.isRequired,
-    services: PropTypes.object.isRequired,
-    children: PropTypes.element.isRequired
-  }
-
-  static childContextTypes = {
-    services: PropTypes.object.isRequired,
-    stores: PropTypes.object.isRequired
-  }
-
+class Provider extends Component {
   constructor (props, context) {
     super(props, context)
 
-    const { stores, services } = this.props
+    const {stores, services} = this.props
 
     this.stores = stores
+
     this.services = Object
       .keys(services)
       .reduce((initializedServices, serviceName) => ({
         ...initializedServices,
-        [serviceName]: new services[serviceName](this.stores)// eslint-disable-line new-parens
+        [serviceName]: new services[serviceName](this.stores)
       }), {})
 
     Object
@@ -30,6 +20,10 @@ export default class Provider extends Component {
       .forEach(actionName => {
         this.services[actionName].stores = this.stores
         this.services[actionName].services = this.services
+
+        if (this.stores[actionName]) {
+          this.services[actionName].store = this.stores[actionName]
+        }
       })
   }
 
@@ -44,3 +38,16 @@ export default class Provider extends Component {
     return Children.only(this.props.children)
   }
 }
+
+Provider.propTypes = {
+  stores: PropTypes.object.isRequired,
+  services: PropTypes.object.isRequired,
+  children: PropTypes.element.isRequired
+}
+
+Provider.childContextTypes = {
+  services: PropTypes.object.isRequired,
+  stores: PropTypes.object.isRequired
+}
+
+export default Provider
