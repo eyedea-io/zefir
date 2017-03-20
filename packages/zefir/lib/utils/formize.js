@@ -97,8 +97,8 @@ export default function formize ({formName, fields, schema = {}, permament = tru
           .reduce((obj, name) => ({
             ...obj,
             [name]:
-              Object.prototype.isPrototypeOf.call(this.form.fields[name], 'checked') ? this.form.fields[name].checked
-                : Object.prototype.isPrototypeOf.call(this.form.fields[name], 'value') ? this.form.fields[name].value
+              Object.prototype.hasOwnProperty.call(this.form.fields[name], 'checked') ? this.form.fields[name].checked
+                : Object.prototype.hasOwnProperty.call(this.form.fields[name], 'value') ? this.form.fields[name].value
                 : this.form.fields[name].defaultValue
           }), {})
 
@@ -127,7 +127,7 @@ export default function formize ({formName, fields, schema = {}, permament = tru
       render () {
         return React.createElement(observer(ComposedComponent), {
           ...this.props,
-          formize: {
+          form: {
             fields: this.form.fields,
             errors: this.form.errors,
             submit: this.submit,

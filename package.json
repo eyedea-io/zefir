@@ -11,7 +11,7 @@
     ]
   },
   "dependencies": {
-    "lerna": "2.0.0-beta.38",
+    "lerna": "2.0.0-beta.38"
   },
   "devDependencies": {
     "standard": "^10.0.0-beta.2",

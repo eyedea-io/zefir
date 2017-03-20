@@ -1,4 +1,5 @@
 import {Component, PropTypes, Children} from 'react'
+import Syncano from 'syncano-client'
 
 class Provider extends Component {
   constructor (props, context) {
@@ -7,6 +8,12 @@ class Provider extends Component {
     const {stores, services} = this.props
 
     this.stores = stores
+
+    try {
+      this.syncano = new Syncano(process.env.SYNCANO_INSTANCE_NAME, {
+        host: process.env.SYNCANO_SPACE_HOST
+      })
+    } catch (e) {}
 
     this.services = Object
       .keys(services)
@@ -20,6 +27,7 @@ class Provider extends Component {
       .forEach(actionName => {
         this.services[actionName].stores = this.stores
         this.services[actionName].services = this.services
+        this.services[actionName].syncano = this.syncano
 
         if (this.stores[actionName]) {
           this.services[actionName].store = this.stores[actionName]
@@ -30,6 +38,7 @@ class Provider extends Component {
   getChildContext () {
     return {
       services: this.services,
+      syncano: this.syncano,
       stores: this.stores
     }
   }
@@ -47,6 +56,7 @@ Provider.propTypes = {
 
 Provider.childContextTypes = {
   services: PropTypes.object.isRequired,
+  syncano: PropTypes.func,
   stores: PropTypes.object.isRequired
 }
 

@@ -1,0 +1,39 @@
+import React from 'react'
+import {Redirect, Route} from 'react-router-dom'
+import connect from '../utils/connect'
+
+const defineMatch = (shouldRender, redirectTo) => {
+  const DefinedMatch = ({
+    component,
+    ...rest
+  }) => (
+    <Route
+      {...rest}
+      render={props => (
+        shouldRender(rest)
+          ? renderComponent(component, props)
+          : rest.redirect
+          ? renderRedirect(redirectTo, props.location)
+          : null
+      )}
+      />
+  )
+
+  return connect(DefinedMatch)
+}
+
+function renderRedirect (pathname, from) {
+  return (
+    <Redirect to={{pathname, state: {from}}} />
+  )
+}
+
+function renderComponent (component, props) {
+  const Component = connect(component)
+
+  return (
+    <Component {...props} />
+  )
+}
+
+export default defineMatch

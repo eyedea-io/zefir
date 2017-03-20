@@ -11,6 +11,7 @@ export default function connect (ComposedComponent) {
       this.customProps = {
         ...props,
         services: context.services,
+        syncano: context.syncano,
         stores: context.stores,
         router: context.router
       }
@@ -30,14 +31,15 @@ export default function connect (ComposedComponent) {
   Connect.contextTypes = {
     services: PropTypes.object,
     stores: PropTypes.object,
+    syncano: PropTypes.func,
     router: PropTypes.object
   }
 
   let WrappedComponent = hoistStatics(Connect, ComposedComponent)
 
   // formize
-  if (WrappedComponent.formize) {
-    WrappedComponent = formize(WrappedComponent.formize)(WrappedComponent)
+  if (WrappedComponent.form) {
+    WrappedComponent = formize(WrappedComponent.form)(WrappedComponent)
   }
 
   return WrappedComponent
