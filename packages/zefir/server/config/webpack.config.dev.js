@@ -2,7 +2,6 @@ import path from 'path'
 import webpack from 'webpack'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import FriendlyErrorsWebpackPlugin from 'friendly-errors-webpack-plugin'
-import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin'
 import paths from './paths'
 import env from './env'
 import babelQuery from './babel.dev'
@@ -92,7 +91,6 @@ module.exports = {
       }
     }),
     new webpack.DefinePlugin(env),
-    new webpack.HotModuleReplacementPlugin(),
-    new CaseSensitivePathsPlugin()
+    new webpack.HotModuleReplacementPlugin()
   ]
 }
