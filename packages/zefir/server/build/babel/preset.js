@@ -5,7 +5,9 @@ const envPlugins = {
     require.resolve('babel-plugin-transform-react-jsx-source')
   ],
   production: [
-    require.resolve('babel-plugin-transform-react-remove-prop-types')
+    require.resolve('babel-plugin-transform-react-remove-prop-types'),
+    // Optimization: hoist JSX that never changes out of render()
+    require.resolve('babel-plugin-transform-react-constant-elements')
   ]
 }
 
@@ -20,12 +22,16 @@ module.exports = {
   ],
   plugins: [
     require.resolve('babel-plugin-react-require'),
+    // @decorator class MyClass {}
     require.resolve('babel-plugin-transform-decorators-legacy'),
     // { ...todo, completed: true }
     require.resolve('babel-plugin-transform-object-rest-spread'),
     // class { handleClick = () => { } }
     require.resolve('babel-plugin-transform-class-properties'),
     require.resolve('babel-plugin-transform-runtime'),
+    // export Module from './Module'
+    require.resolve('babel-plugin-transform-export-extensions'),
+      // <style jsx></style>
     require.resolve('styled-jsx/babel'),
     ...plugins,
     [

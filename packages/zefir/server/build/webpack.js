@@ -9,7 +9,7 @@ import CaseSensitivePathPlugin from 'case-sensitive-paths-webpack-plugin'
 import UnlinkFilePlugin from './plugins/unlink-file-plugin'
 import WatchPagesPlugin from './plugins/watch-pages-plugin'
 import JsonPagesPlugin from './plugins/json-pages-plugin'
-import findBabelConfig from './babel/find-config'
+import getBabelConfig from './babel/get-config'
 
 process.noDeprecation = true
 
@@ -124,29 +124,7 @@ export default async function createCompiler (dir, {dev = false, quiet = false, 
     )
   }
 
-  const mainBabelOptions = {
-    cacheDirectory: true,
-    sourceMaps: dev ? 'both' : false,
-    presets: []
-  }
-
-  const externalBabelConfig = findBabelConfig(dir)
-  if (externalBabelConfig) {
-    console.log(`> Using external babel configuration`)
-    console.log(`> location: "${externalBabelConfig.loc}"`)
-    // It's possible to turn off babelrc support via babelrc itself.
-    // In that case, we should add our default preset.
-    // That's why we need to do this.
-    const {options} = externalBabelConfig
-    mainBabelOptions.babelrc = options.babelrc !== false
-  } else {
-    mainBabelOptions.babelrc = false
-  }
-
-  // Add our default preset if the no "babelrc" found.
-  if (!mainBabelOptions.babelrc) {
-    mainBabelOptions.presets.push(require.resolve('./babel/preset'))
-  }
+  const mainBabelOptions = getBabelConfig(dir, dev)
 
   const rules = []
   .concat([{
