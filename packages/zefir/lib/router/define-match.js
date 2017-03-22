@@ -2,18 +2,21 @@ import React from 'react'
 import {Redirect, Route} from 'react-router-dom'
 import connect from '../utils/connect'
 
-const defineMatch = (shouldRender, redirectTo) => {
+const defineMatch = (shouldRender) => {
   const DefinedMatch = ({
     component,
+    exact,
+    path,
     ...rest
   }) => (
     <Route
-      {...rest}
+      path={path}
+      exact={exact}
       render={props => (
         shouldRender(rest)
           ? renderComponent(component, props)
           : rest.redirect
-          ? renderRedirect(redirectTo, props.location)
+          ? renderRedirect(rest.redirect, props.location)
           : null
       )}
       />
@@ -28,7 +31,7 @@ function renderRedirect (pathname, from) {
   )
 }
 
-function renderComponent (component, props) {
+function renderComponent (component, {history, location, match, ...props}) {
   const Component = connect(component)
 
   return (
