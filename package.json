@@ -2,7 +2,7 @@
   "scripts": {
     "lint": "standard --verbose | snazzy",
     "lint:fix": "standard --fix",
-    "release": "lerna publish --conventional-commits --npm-tag=beta"
+    "release": "lerna publish --npm-tag=beta"
   },
   "standard": {
     "parser": "babel-eslint",
