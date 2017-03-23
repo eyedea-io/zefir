@@ -4,13 +4,16 @@ import HtmlWebpackPlugin from 'html-webpack-plugin'
 import FriendlyErrorsWebpackPlugin from 'friendly-errors-webpack-plugin'
 import paths from './paths'
 import env from './env'
-import defaultPreset from './babel.dev'
 import getBabelConfig from '../build/babel/get-config'
 
 process.noDeprecation = true
 
 const dir = process.cwd()
-const babelQuery = getBabelConfig(dir, true, defaultPreset)
+const babelQuery = getBabelConfig(dir, true)
+
+babelQuery.plugins = [
+  require.resolve('react-hot-loader/babel')
+]
 
 const projectNodeModules = path.join(dir, 'node_modules')
 const zefirNodeModules = path.join(__dirname, '..', '..', '..', './node_modules')

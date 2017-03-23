@@ -1,6 +1,6 @@
 import findBabelConfig from './find-config'
 
-export default function getBabelConfig (dir, dev, defaultPreset) {
+export default function getBabelConfig (dir, dev) {
   const mainBabelOptions = {
     cacheDirectory: true,
     sourceMaps: dev ? 'both' : false,
@@ -23,7 +23,7 @@ export default function getBabelConfig (dir, dev, defaultPreset) {
 
   // Add our default preset if the no "babelrc" found.
   if (!mainBabelOptions.babelrc) {
-    mainBabelOptions.presets.push(defaultPreset || require.resolve('./preset'))
+    mainBabelOptions.presets.push(require.resolve('./preset'))
   }
 
   return mainBabelOptions

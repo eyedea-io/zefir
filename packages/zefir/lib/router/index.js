@@ -1,3 +1,4 @@
+import React from 'react'
 import {Route, Switch, Link, NavLink, Prompt} from 'react-router-dom'
 import {connect} from '../utils'
 
