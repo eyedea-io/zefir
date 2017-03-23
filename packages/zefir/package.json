@@ -13,8 +13,10 @@
   },
   "files": [
     "dist",
-    "dist/lib/router",
-    "dist/lib/utils"
+    "babel.js",
+    "head.js",
+    "router.js",
+    "utils.js"
   ],
   "scripts": {
     "build": "fly",
