@@ -26,6 +26,13 @@ const addDevMiddlewares = (app, webpackConfig) => {
   // artifacts, we use it instead
   const fs = middleware.fileSystem
 
+  app.get('/static/:path', function (req, res, params) {
+    try {
+      res.sendFile(req.params.path, {root: `${compiler.outputPath}/../src/static`})
+    } catch (e) {
+      res.sendStatus(404)
+    }
+  })
   app.get('*', (req, res) => {
     fs.readFile(path.join(compiler.outputPath, 'index.html'), (err, file) => {
       if (err) {

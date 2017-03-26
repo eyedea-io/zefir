@@ -59,6 +59,7 @@
     "case-sensitive-paths-webpack-plugin": "1.1.4",
     "coercer": "^1.1.2",
     "compression": "^1.6.2",
+    "copy-webpack-plugin": "4.0.1",
     "cross-spawn": "5.0.1",
     "del": "2.2.2",
     "express": "^4.14.1",

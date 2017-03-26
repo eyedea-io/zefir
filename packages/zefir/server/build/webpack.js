@@ -2,6 +2,7 @@ import {resolve, join} from 'path'
 import {createHash} from 'crypto'
 import webpack from 'webpack'
 import glob from 'glob-promise'
+import CopyWebpackPlugin from 'copy-webpack-plugin'
 import WriteFilePlugin from 'write-file-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import FriendlyErrorsWebpackPlugin from 'friendly-errors-webpack-plugin'
@@ -98,6 +99,9 @@ export default async function createCompiler (dir, {dev = false, quiet = false, 
         return count >= minChunks
       }
     }),
+    new CopyWebpackPlugin([
+      { from: 'src/static', to: 'static' }
+    ]),
     new JsonPagesPlugin(),
     new CaseSensitivePathPlugin()
   ]
