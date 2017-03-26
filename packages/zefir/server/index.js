@@ -30,7 +30,7 @@ const addDevMiddlewares = (app, webpackConfig) => {
   app.get('/static/*', function (req, res) {
     try {
       const root = `${compiler.outputPath}/../src/static`
-      const file = req.originalUrl.split('static/')[1]
+      const file = req.originalUrl.split('static/')[1].split('?')[0]
       res.set('Content-Type', mime.lookup(file))
       res.sendFile(file, {root})
     } catch (e) {
