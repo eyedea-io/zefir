@@ -1,4 +1,5 @@
 /* eslint-disable no-console, no-var, vars-on-top, global-require */
+const mime = require('mime')
 const path = require('path')
 const express = require('express')
 const compression = require('compression')
@@ -26,9 +27,12 @@ const addDevMiddlewares = (app, webpackConfig) => {
   // artifacts, we use it instead
   const fs = middleware.fileSystem
 
-  app.get('/static/:path', function (req, res, params) {
+  app.get('/static/*', function (req, res) {
     try {
-      res.sendFile(req.params.path, {root: `${compiler.outputPath}/../src/static`})
+      const root = `${compiler.outputPath}/../src/static`
+      const file = req.originalUrl.split('static/')[1]
+      res.set('Content-Type', mime.lookup(file))
+      res.sendFile(file, {root})
     } catch (e) {
       res.sendStatus(404)
     }
@@ -47,7 +51,7 @@ const addDevMiddlewares = (app, webpackConfig) => {
 // Production middlewares
 const addProdMiddlewares = (app, options) => {
   const publicPath = options.publicPath || '/'
-  const outputPath = options.outputPath || path.resolve(process.cwd(), 'build')
+  const outputPath = options.outputPath || path.resolve(process.cwd(), '.zefir')
 
   // compression middleware compresses your server responses which makes them
   // smaller (applies also to assets). You can read more about that technique
