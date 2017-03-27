@@ -1,14 +1,24 @@
-/* eslint-disable no-console, no-var, vars-on-top, global-require */
 const mime = require('mime')
 const path = require('path')
-const express = require('express')
-const compression = require('compression')
+const {existsSync} = require('fs')
+
+let config = {}
+const dir = process.cwd()
+const configPath = path.join(dir, 'zefir.config.js')
+
+if (existsSync(configPath)) {
+  config = require(configPath)
+}
 
 // Dev middleware
 const addDevMiddlewares = (app, webpackConfig) => {
   const webpack = require('webpack')
   const webpackDevMiddleware = require('webpack-dev-middleware')
   const webpackHotMiddleware = require('webpack-hot-middleware')
+  if (config.webpack) {
+    console.log('> Using "webpack" config function defined in zefir.config.js.')
+    webpackConfig = config.webpack(webpackConfig, {dev: true})
+  }
   const compiler = webpack(webpackConfig)
   const middleware = webpackDevMiddleware(compiler, {
     publicPath: webpackConfig.output.publicPath,
@@ -48,30 +58,10 @@ const addDevMiddlewares = (app, webpackConfig) => {
   })
 }
 
-// Production middlewares
-const addProdMiddlewares = (app, options) => {
-  const publicPath = options.publicPath || '/'
-  const outputPath = options.outputPath || path.resolve(process.cwd(), '.zefir')
-
-  // compression middleware compresses your server responses which makes them
-  // smaller (applies also to assets). You can read more about that technique
-  // and other good practices on official Express.js docs http://mxs.is/googmy
-  app.use(compression())
-  app.use(publicPath, express.static(outputPath))
-
-  app.get('*', (req, res) => res.sendFile(path.resolve(outputPath, 'index.html')))
-}
-
-/**
- * Front-end middleware
- */
 module.exports = (app, options) => {
-  if (process.env.NODE_ENV === 'production') {
-    addProdMiddlewares(app, options)
-  } else {
-    const webpackConfig = require('./config/webpack.config.dev')
-    addDevMiddlewares(app, webpackConfig)
-  }
+  const webpackConfig = require('./config/webpack.config.dev')
+
+  addDevMiddlewares(app, webpackConfig)
 
   return app
 }

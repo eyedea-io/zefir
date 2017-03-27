@@ -1,5 +1,6 @@
 import {resolve, join} from 'path'
 import {createHash} from 'crypto'
+import {existsSync} from 'fs'
 import webpack from 'webpack'
 import glob from 'glob-promise'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
@@ -11,6 +12,14 @@ import UnlinkFilePlugin from './plugins/unlink-file-plugin'
 import WatchPagesPlugin from './plugins/watch-pages-plugin'
 import JsonPagesPlugin from './plugins/json-pages-plugin'
 import getBabelConfig from './babel/get-config'
+
+let config = {}
+const dir = process.cwd()
+const configPath = join(dir, 'zefir.config.js')
+
+if (existsSync(configPath)) {
+  config = require(configPath)
+}
 
 process.noDeprecation = true
 
@@ -156,7 +165,7 @@ export default async function createCompiler (dir, {dev = false, quiet = false, 
     options: mainBabelOptions
   }])
 
-  const webpackConfig = {
+  let webpackConfig = {
     context: dir,
     entry,
     output: {
@@ -200,9 +209,10 @@ export default async function createCompiler (dir, {dev = false, quiet = false, 
     performance: {hints: false}
   }
 
-  // if (config.webpack) {
-  //   console.log('> Using "webpack" config function defined in zefir.config.js.')
-  //   webpackConfig = await config.webpack(webpackConfig, { dev })
-  // }
+  if (config.webpack) {
+    console.log('> Using "webpack" config function defined in zefir.config.js.')
+    webpackConfig = await config.webpack(webpackConfig, { dev })
+  }
+
   return webpack(webpackConfig)
 }
