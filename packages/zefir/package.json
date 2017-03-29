@@ -85,7 +85,7 @@
     "react-router-dom": "^4.0.0-beta.6",
     "source-map-support": "0.4.11",
     "styled-jsx": "0.5.7",
-    "syncano-client": "0.15.2-3",
+    "syncano-client": "0.15.2-4",
     "url": "0.11.0",
     "url-loader": "0.5.7",
     "uuid": "3.0.1",
