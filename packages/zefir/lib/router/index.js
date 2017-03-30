@@ -6,7 +6,8 @@ const Match = function ({
   component,
   ...rest
 }) {
-  return <Route {...rest} component={connect(component)} />
+  const ConnectedRoute = connect(Route)
+  return <ConnectedRoute {...rest} component={connect(component)} />
 }
 
 export {default as defineMatch} from './define-match'

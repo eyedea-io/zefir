@@ -8,19 +8,23 @@ const defineMatch = (shouldRender) => {
     exact,
     path,
     ...rest
-  }) => (
-    <Route
-      path={path}
-      exact={exact}
-      render={props => (
-        shouldRender(rest)
-          ? renderComponent(component, props)
-          : rest.redirect
-          ? renderRedirect(rest.redirect, props.location)
-          : null
-      )}
-      />
-  )
+  }) => {
+    const ConnectedRoute = connect(Route)
+
+    return (
+      <ConnectedRoute
+        path={path}
+        exact={exact}
+        render={props => (
+          shouldRender(rest)
+            ? renderComponent(component, props)
+            : rest.redirect
+            ? renderRedirect(rest.redirect, props.location)
+            : null
+        )}
+        />
+    )
+  }
 
   return connect(DefinedMatch)
 }
