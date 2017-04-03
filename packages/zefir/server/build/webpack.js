@@ -166,8 +166,7 @@ export default async function createCompiler (dir, {dev = false, quiet = false, 
         _ROOT_: dir,
         'zefir/head': require.resolve(join(__dirname, '..', '..', 'lib', 'head')),
         'zefir/utils': require.resolve(join(__dirname, '..', '..', 'lib', 'utils')),
-        'zefir/router': require.resolve(join(__dirname, '..', '..', 'lib', 'router')),
-        'styled-jsx/style': require.resolve('styled-jsx/style')
+        'zefir/router': require.resolve(join(__dirname, '..', '..', 'lib', 'router'))
       }
     },
     resolveLoader: {

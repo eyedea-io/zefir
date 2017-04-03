@@ -16,7 +16,7 @@ const plugins = envPlugins[process.env.NODE_ENV] || []
 module.exports = {
   presets: [
     [require.resolve('babel-preset-env'), {
-      es2015: {modules: false}
+      modules: false
     }],
     require.resolve('babel-preset-react')
   ],
