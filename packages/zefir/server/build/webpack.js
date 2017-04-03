@@ -2,16 +2,13 @@ import {resolve, join} from 'path'
 import {createHash} from 'crypto'
 import {existsSync} from 'fs'
 import webpack from 'webpack'
-import glob from 'glob-promise'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import WriteFilePlugin from 'write-file-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import FriendlyErrorsWebpackPlugin from 'friendly-errors-webpack-plugin'
 import CaseSensitivePathPlugin from 'case-sensitive-paths-webpack-plugin'
-import UnlinkFilePlugin from './plugins/unlink-file-plugin'
-import WatchPagesPlugin from './plugins/watch-pages-plugin'
-import JsonPagesPlugin from './plugins/json-pages-plugin'
 import getBabelConfig from './babel/get-config'
+import paths from '../config/paths'
 
 let config = {}
 const dir = process.cwd()
@@ -24,35 +21,41 @@ if (existsSync(configPath)) {
 process.noDeprecation = true
 
 const defaultPage = join(__dirname, '..', 'index.html')
-const defaultPages = [
-  '_error.js',
-  '_document.js'
-]
+// const defaultPages = [
+//   '_error.js',
+//   '_document.js'
+// ]
 
-const nextPagesDir = join(__dirname, '..', '..', 'pages')
-const interpolateNames = new Map(defaultPages.map(p => {
-  return [join(nextPagesDir, p), `dist/pages/${p}`]
-}))
+// const nextPagesDir = join(__dirname, '..', '..', 'pages')
+// const interpolateNames = new Map(defaultPages.map(p => {
+//   return [join(nextPagesDir, p), `dist/pages/${p}`]
+// }))
 
 export default async function createCompiler (dir, {dev = false, quiet = false, buildDir} = {}) {
   dir = resolve(dir)
 
   const projectNodeModules = join(dir, 'node_modules')
   const zefirNodeModules = join(__dirname, '..', '..', '..', './node_modules')
-  const defaultEntries = []
+  let defaultEntries = dev ? [
+    'react-hot-loader/patch',
+    'webpack-hot-middleware/client'
+  ] : []
 
   let minChunks
 
   const entry = async () => {
     const entries = {
-      'polyfils.js': require.resolve('../polyfills'),
-      'main.js': require.resolve('../root')
+      'main.js': [
+        ...defaultEntries,
+        require.resolve('../polyfills'),
+        require.resolve('../root')
+      ]
     }
 
-    const pages = await glob('pages/**/*.js', {cwd: dir})
-    for (const p of pages) {
-      entries[join('bundles', p)] = [...defaultEntries, `./${p}?entry`]
-    }
+    // const pages = await glob('pages/**/*.js', {cwd: dir})
+    // for (const p of pages) {
+    //   entries[join('bundles', p)] = [...defaultEntries, `./${p}?entry`]
+    // }
 
     // for (const p of defaultPages) {
     //   const entryName = join('bundles', 'pages', p)
@@ -70,10 +73,10 @@ export default async function createCompiler (dir, {dev = false, quiet = false, 
   const plugins = [
     new webpack.LoaderOptionsPlugin({
       options: {
-        context: dir,
-        customInterpolateName (url) {
-          return interpolateNames.get(this.resourcePath) || url
-        }
+        context: dir
+        // customInterpolateName (url) {
+        //   return interpolateNames.get(this.resourcePath) || url
+        // }
       }
     }),
     new HtmlWebpackPlugin({
@@ -111,16 +114,13 @@ export default async function createCompiler (dir, {dev = false, quiet = false, 
     new CopyWebpackPlugin([
       { from: 'src/static', to: 'static' }
     ]),
-    new JsonPagesPlugin(),
     new CaseSensitivePathPlugin()
   ]
 
   if (dev) {
     plugins.push(
       new webpack.HotModuleReplacementPlugin(),
-      new webpack.NoEmitOnErrorsPlugin(),
-      new UnlinkFilePlugin(),
-      new WatchPagesPlugin(dir)
+      new webpack.NoEmitOnErrorsPlugin()
     )
     if (!quiet) {
       plugins.push(new FriendlyErrorsWebpackPlugin())
@@ -137,33 +137,7 @@ export default async function createCompiler (dir, {dev = false, quiet = false, 
     )
   }
 
-  const mainBabelOptions = getBabelConfig(dir, dev)
-
-  const rules = []
-  .concat([{
-    test: /\.json$/,
-    loader: 'json-loader'
-  }, {
-    loader: 'babel-loader',
-    include: nextPagesDir,
-    exclude (str) {
-      return /node_modules/.test(str) && str.indexOf(nextPagesDir) !== 0
-    },
-    options: {
-      babelrc: false,
-      cacheDirectory: true,
-      sourceMaps: dev ? 'both' : false,
-      presets: [require.resolve('./babel/preset')]
-    }
-  }, {
-    test: /\.js(\?[^?]*)?$/,
-    loader: 'babel-loader',
-    include: [dir],
-    exclude (str) {
-      return /node_modules/.test(str)
-    },
-    options: mainBabelOptions
-  }])
+  const babelQuery = getBabelConfig(dir, dev)
 
   let webpackConfig = {
     context: dir,
@@ -184,26 +158,41 @@ export default async function createCompiler (dir, {dev = false, quiet = false, 
     },
     resolve: {
       modules: [
-        resolve('./'),
+        paths.appSrc,
         projectNodeModules,
         zefirNodeModules
       ],
       alias: {
         _ROOT_: dir,
-        'zefir/utils': resolve(join(__dirname, '..', '..', 'lib', 'utils')),
-        'zefir/router': resolve(join(__dirname, '..', '..', 'lib', 'router'))
+        'zefir/head': require.resolve(join(__dirname, '..', '..', 'lib', 'head')),
+        'zefir/utils': require.resolve(join(__dirname, '..', '..', 'lib', 'utils')),
+        'zefir/router': require.resolve(join(__dirname, '..', '..', 'lib', 'router')),
+        'styled-jsx/style': require.resolve('styled-jsx/style')
       }
     },
     resolveLoader: {
       modules: [
-        resolve('./'),
+        paths.appSrc,
         projectNodeModules,
         zefirNodeModules
       ]
     },
     plugins,
     module: {
-      rules
+      rules: [
+        {
+          test: /\.js$/,
+          loader: 'babel-loader',
+          exclude: [/node_modules/],
+          options: babelQuery
+        },
+        {
+          test: /\.json$/,
+          include: [paths.appSrc],
+          exclude: [/node_modules/],
+          loader: 'json-loader'
+        }
+      ]
     },
     devtool: dev ? 'inline-source-map' : false,
     performance: {hints: false}

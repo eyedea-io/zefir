@@ -16,6 +16,7 @@ export default function getBabelConfig (dir, dev) {
     // In that case, we should add our default preset.
     // That's why we need to do this.
     const {options} = externalBabelConfig
+
     mainBabelOptions.babelrc = options.babelrc !== false
   } else {
     mainBabelOptions.babelrc = false
@@ -23,8 +24,8 @@ export default function getBabelConfig (dir, dev) {
 
   // Add our default preset if the no "babelrc" found.
   if (!mainBabelOptions.babelrc) {
-    mainBabelOptions.presets.push(require.resolve('./preset'))
   }
+  mainBabelOptions.presets.push(require.resolve('./preset'))
 
   return mainBabelOptions
 }
