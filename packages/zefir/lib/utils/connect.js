@@ -12,6 +12,7 @@ export default function connect (ComposedComponent) {
         ...props,
         services: context.services,
         stores: context.stores,
+        emit: context.emit,
         router: context.router
       }
     }
@@ -30,6 +31,7 @@ export default function connect (ComposedComponent) {
   Connect.contextTypes = {
     services: PropTypes.object,
     stores: PropTypes.object,
+    emit: PropTypes.func,
     router: PropTypes.object
   }
 

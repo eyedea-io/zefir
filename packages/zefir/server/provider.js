@@ -1,34 +1,51 @@
 import {Component, PropTypes, Children} from 'react'
+import {emit} from '../lib/utils/listener'
 
 class Provider extends Component {
   constructor (props, context) {
     super(props, context)
 
     const {stores, services} = this.props
-
+    this.listeners = []
     this.stores = stores
 
     this.services = Object
       .keys(services)
-      .reduce((initializedServices, serviceName) => ({
-        ...initializedServices,
-        [serviceName]: new services[serviceName](this.stores)
-      }), {})
+      .reduce((initializedServices, serviceName) => {
+        return ({
+          ...initializedServices,
+          [serviceName]: new services[serviceName](this.stores)
+        })
+      }, {})
 
     Object
-      .keys(services)
-      .forEach(actionName => {
-        this.services[actionName].stores = this.stores
-        this.services[actionName].services = this.services
+      .keys(this.services)
+      .forEach(serviceName => {
+        this.services[serviceName].stores = this.stores
+        this.services[serviceName].services = this.services
 
-        if (this.stores[actionName]) {
-          this.services[actionName].store = this.stores[actionName]
+        if (this.stores[serviceName]) {
+          this.services[serviceName].store = this.stores[serviceName]
         }
+
+        let listeners = this.services[serviceName]._whenable || []
+        listeners = listeners.map(l => ({
+          ...l,
+          handler: l.handler.bind(this.services[serviceName])
+        }))
+        this.listeners = this.listeners.concat(listeners)
+      })
+
+    Object
+      .keys(this.services)
+      .forEach(serviceName => {
+        this.services[serviceName].emit = emit.bind(null, this.listeners)
       })
   }
 
   getChildContext () {
     return {
+      listeners: this.listeners,
       services: this.services,
       stores: this.stores
     }
@@ -46,6 +63,7 @@ Provider.propTypes = {
 }
 
 Provider.childContextTypes = {
+  listeners: PropTypes.array.isRequired,
   services: PropTypes.object.isRequired,
   stores: PropTypes.object.isRequired
 }
