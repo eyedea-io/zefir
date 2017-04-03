@@ -24,8 +24,8 @@ export default function getBabelConfig (dir, dev) {
 
   // Add our default preset if the no "babelrc" found.
   if (!mainBabelOptions.babelrc) {
+    mainBabelOptions.presets.push(require.resolve('./preset'))
   }
-  mainBabelOptions.presets.push(require.resolve('./preset'))
 
   return mainBabelOptions
 }
