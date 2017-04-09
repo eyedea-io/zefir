@@ -17,9 +17,9 @@ export default function connect (ComposedComponent) {
       }
     }
 
-    componentDidMount = () => {
+    componentWillMount = () => {
       if (ComposedComponent.init) {
-        ComposedComponent.init(this.customProps)
+        this.customProps = ComposedComponent.init(this.customProps)
       }
     }
 
