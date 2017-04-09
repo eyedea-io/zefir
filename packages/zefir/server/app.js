@@ -9,12 +9,11 @@ const ConnectedIndex = connect(Index)
 const stores = {}
 const services = {}
 
-const storesAndServices = /\.(store|service)\.js$/
-const req = require.context('_SRC_', true, storesAndServices)
+const req = require.context('_SRC_', true, /\.(store|service)\.js$/)
 
 req
   .keys()
-  .filter(key => storesAndServices.test(key))
+  .filter(key => /\.(store|service)\.js$/.test(key))
   .forEach(modulePath => {
     const filename = modulePath.split('/').pop()
     const [name, type] = filename.match(/(.*)\.js$/)[1].split('.')
