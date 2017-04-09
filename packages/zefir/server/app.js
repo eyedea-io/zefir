@@ -10,7 +10,7 @@ const stores = {}
 const services = {}
 
 const storesAndServices = /\.(store|service)\.js$/
-const req = require.context('_ROOT_/src', true, storesAndServices)
+const req = require.context('_SRC_', true, storesAndServices)
 
 req
   .keys()

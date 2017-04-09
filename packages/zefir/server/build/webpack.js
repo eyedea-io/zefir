@@ -163,7 +163,7 @@ export default async function createCompiler (dir, {dev = false, quiet = false, 
         zefirNodeModules
       ],
       alias: {
-        _ROOT_: dir,
+        _SRC_: join(dir, 'src'),
         'zefir/head': require.resolve(join(__dirname, '..', '..', 'lib', 'head')),
         'zefir/utils': require.resolve(join(__dirname, '..', '..', 'lib', 'utils')),
         'zefir/router': require.resolve(join(__dirname, '..', '..', 'lib', 'router'))

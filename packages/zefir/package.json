@@ -12,7 +12,6 @@
     "zefir": "./dist/bin/zefir"
   },
   "files": [
-    "lib",
     "dist",
     "babel.js",
     "head.js",

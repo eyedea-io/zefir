@@ -1,4 +1,4 @@
-import path from 'path'
+import {join} from 'path'
 import webpack from 'webpack'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import FriendlyErrorsWebpackPlugin from 'friendly-errors-webpack-plugin'
@@ -15,8 +15,8 @@ babelQuery.plugins = [
   require.resolve('react-hot-loader/babel')
 ]
 
-const projectNodeModules = path.join(dir, 'node_modules')
-const zefirNodeModules = path.join(__dirname, '..', '..', '..', './node_modules')
+const projectNodeModules = join(dir, 'node_modules')
+const zefirNodeModules = join(__dirname, '..', '..', '..', './node_modules')
 
 module.exports = {
   context: dir,
@@ -45,10 +45,10 @@ module.exports = {
       '.jsx'
     ],
     alias: {
-      _ROOT_: dir,
-      'zefir/head': require.resolve(path.join(__dirname, '..', '..', 'lib', 'head')),
-      'zefir/utils': require.resolve(path.join(__dirname, '..', '..', 'lib', 'utils')),
-      'zefir/router': require.resolve(path.join(__dirname, '..', '..', 'lib', 'router'))
+      _SRC_: join(dir, 'src'),
+      'zefir/head': require.resolve(join(__dirname, '..', '..', 'lib', 'head')),
+      'zefir/utils': require.resolve(join(__dirname, '..', '..', 'lib', 'utils')),
+      'zefir/router': require.resolve(join(__dirname, '..', '..', 'lib', 'router'))
     }
   },
   resolveLoader: {
@@ -80,7 +80,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       inject: true,
-      template: path.join(__dirname, '..', 'index.html')
+      template: join(__dirname, '..', 'index.html')
     }),
     new FriendlyErrorsWebpackPlugin({
       compilationSuccessInfo: {
