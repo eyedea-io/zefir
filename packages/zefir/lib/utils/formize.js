@@ -75,7 +75,7 @@ export default function formize ({formName, fields, schema = {}, permament = tru
 
       setValue (event, val) {
         const isObject = typeof event === 'object'
-        const isCheckbox = event.target.type === 'checkbox'
+        const isCheckbox = isObject && event.target && event.target.type === 'checkbox'
 
         const name = isObject ? event.target.name : event
         const value = isObject ? event.target.value : val
