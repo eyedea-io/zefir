@@ -1,5 +1,5 @@
 import React from 'react'
-import {BrowserRouter as Router} from 'react-router-dom'
+import {HashRouter as Router} from 'react-router-dom'
 import Index from 'src'
 import {connect} from '../lib/utils'
 import Provider from './provider'
