@@ -1,4 +1,5 @@
-import {Component, PropTypes, Children} from 'react'
+import {Component, Children} from 'react'
+import PropTypes from 'prop-types'
 import {emit} from '../lib/utils/listener'
 
 class Provider extends Component {
@@ -8,13 +9,14 @@ class Provider extends Component {
     const {stores, services} = this.props
     this.listeners = []
     this.stores = stores
+    this.router = context.router
 
     this.services = Object
       .keys(services)
       .reduce((initializedServices, serviceName) => {
         return ({
           ...initializedServices,
-          [serviceName]: new services[serviceName](this.stores)
+          [serviceName]: new services[serviceName](this.stores, this.router)
         })
       }, {})
 
@@ -23,6 +25,7 @@ class Provider extends Component {
       .forEach(serviceName => {
         this.services[serviceName].stores = this.stores
         this.services[serviceName].services = this.services
+        this.services[serviceName].router = this.router
 
         if (this.stores[serviceName]) {
           this.services[serviceName].store = this.stores[serviceName]
@@ -60,6 +63,10 @@ Provider.propTypes = {
   stores: PropTypes.object.isRequired,
   services: PropTypes.object.isRequired,
   children: PropTypes.element.isRequired
+}
+
+Provider.contextTypes = {
+  router: PropTypes.object.isRequired
 }
 
 Provider.childContextTypes = {

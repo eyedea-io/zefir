@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
+import PropTypes from 'prop-types'
 import coercer from 'coercer'
 import ZSchema from 'z-schema'
 import {observer} from 'mobx-react'

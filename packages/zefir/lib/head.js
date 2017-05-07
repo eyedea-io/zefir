@@ -1,6 +1,5 @@
-import React, {Component, PropTypes} from 'react'
-
-// const HEAD_ATTR = 'zefir-head'
+import React, {Component} from 'react'
+import PropTypes from 'prop-types'
 
 const DEFAULT_TITLE = ''
 

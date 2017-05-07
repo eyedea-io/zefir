@@ -14,10 +14,20 @@ export function when (event, index = 1) {
       object._whenable = []
     }
 
-    object._whenable.push({
-      event,
-      index,
-      handler: action(object[name])
-    })
+    if (Array.isArray(event)) {
+      event.forEach(event => {
+        object._whenable.push({
+          event,
+          index,
+          handler: action(object[name])
+        })
+      })
+    } else {
+      object._whenable.push({
+        event,
+        index,
+        handler: action(object[name])
+      })
+    }
   }
 }

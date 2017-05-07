@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
+import PropTypes from 'prop-types'
 import hoistStatics from 'hoist-non-react-statics'
 import {observer} from 'mobx-react'
 import formize from './formize'
@@ -19,7 +20,11 @@ export default function connect (ComposedComponent) {
 
     componentWillMount = () => {
       if (ComposedComponent.init) {
-        this.customProps = ComposedComponent.init(this.customProps)
+        const newProps = ComposedComponent.init(this.customProps)
+
+        if (newProps) {
+          this.customProps = newProps
+        }
       }
     }
 

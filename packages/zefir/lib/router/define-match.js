@@ -4,12 +4,14 @@ import connect from '../utils/connect'
 
 const defineMatch = (shouldRender) => {
   const DefinedMatch = ({
+    children,
     component,
     exact,
     path,
     ...rest
   }) => {
     const ConnectedRoute = connect(Route)
+    const renderable = children ? () => children : component
 
     return (
       <ConnectedRoute
@@ -17,7 +19,7 @@ const defineMatch = (shouldRender) => {
         exact={exact}
         render={props => (
           shouldRender(rest)
-            ? renderComponent(component, props)
+            ? renderComponent(renderable, props)
             : rest.redirect
             ? renderRedirect(rest.redirect, props.location)
             : null

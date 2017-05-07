@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component} from 'react'
 import {HashRouter as Router} from 'react-router-dom'
 import Index from 'src'
 import {connect} from '../lib/utils'
@@ -27,10 +27,14 @@ req
     }
   })
 
-export default () => (
-  <Provider stores={stores} services={services}>
-    <Router>
-      <ConnectedIndex />
-    </Router>
-  </Provider>
-)
+export default class App extends Component {
+  render () {
+    return (
+      <Router>
+        <Provider stores={stores} services={services}>
+          <ConnectedIndex />
+        </Provider>
+      </Router>
+    )
+  }
+}

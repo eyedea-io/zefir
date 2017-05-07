@@ -1,14 +1,22 @@
 import React from 'react'
-import {Route, Switch, Link, NavLink, Prompt} from 'react-router-dom'
+import {Route, Switch, Link, NavLink, Redirect, Prompt} from 'react-router-dom'
 import {connect} from '../utils'
 
 const Match = function ({
+  children,
   component,
   ...rest
 }) {
   const ConnectedRoute = connect(Route)
-  return <ConnectedRoute {...rest} component={connect(component)} />
+  const renderable = children ? () => {
+    if (Array.isArray(children)) {
+      return <div>{children}</div>
+    }
+
+    return children
+  } : component
+  return <ConnectedRoute {...rest} component={connect(renderable)} />
 }
 
 export {default as defineMatch} from './define-match'
-export {Route, Switch, Link, Match, NavLink, Prompt}
+export {Route, Switch, Link, Match, NavLink, Redirect, Prompt}
