@@ -53,7 +53,7 @@ export default observable({
 })
 ```
 
-** Accessing stores in Components **
+**Accessing stores in Components**
 
 ```js
 // task-list.js
@@ -79,7 +79,7 @@ export default connect(TaskList)
 ## Services
 Service is a class containing actions that operate on stores.
 
-** Creating services **
+**Creating services**
 
 Every file in `src/**` directory ending with `.service.js` is accessible by every `connected` component. Go to [Connected Components](#connected-components) to learn more. 
 
@@ -96,7 +96,7 @@ export default class Tasks {
 }
 ```
 
-** Accessing services in components **
+**Accessing services in components**
 
 ```js
 // task-list.js
@@ -124,7 +124,7 @@ TaskList.init = ({
 export default connect(TaskList)
 ```
 
-** Accessing stores in service **
+**Accessing stores in service**
 
 If you have store and service sharing name, for example `tasks.store.js` and `tasks.service.js` then in that service you can access `tasks.store.js` by `this.store`:
 
@@ -153,7 +153,7 @@ export default class Tasks {
 }
 ```
 
-** Accessing other services in service ** 
+**Accessing other services in service**
 
 Other services can be accessed by `this.services`:
 
@@ -213,7 +213,7 @@ const Routes = () => (
 export default Routes
 ```
 
-** Define custom match ** 
+**Define custom match** 
 
 ```js
 import {defineMatch} from 'zefir/router'
