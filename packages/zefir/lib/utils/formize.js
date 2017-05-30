@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import coercer from 'coercer'
 import ZSchema from 'z-schema'
 import {observer} from 'mobx-react'
-import {extendObservable, observable} from 'mobx'
+import {extendObservable, observable, isArrayLike} from 'mobx'
 import * as FormRules from './formize.rules'
 
 export default function formize ({formName, fields, schema = {}, permament = true}) {
@@ -55,15 +55,28 @@ export default function formize ({formName, fields, schema = {}, permament = tru
 
         form.fields = Object
           .keys(form.fields)
-          .reduce((obj, name) => ({
-            ...obj,
-            [name]: {
-              name,
-              value: '',
-              onChange: e => this.setValue(e),
-              ...form.fields[name]
+          .reduce((obj, name) => {
+            if (Array.isArray(form.fields[name])) {
+              return {
+                ...obj,
+                [name]: form.fields[name].map(item => ({
+                  name,
+                  onChange: e => this.setValue(e),
+                  ...item
+                }))
+              }
             }
-          }), {})
+
+            return {
+              ...obj,
+              [name]: {
+                name,
+                value: '',
+                onChange: e => this.setValue(e),
+                ...form.fields[name]
+              }
+            }
+          }, {})
 
         if (!context.stores.forms.get(formName) || !permament) {
           context.stores.forms.set(formName, form)
@@ -77,10 +90,23 @@ export default function formize ({formName, fields, schema = {}, permament = tru
       setValue (event, val) {
         const isObject = typeof event === 'object'
         const isCheckbox = isObject && event.target && event.target.type === 'checkbox'
+        const isRadio = isObject && event.target && event.target.type === 'radio'
 
         const name = isObject ? event.target.name : event
         const value = isObject ? event.target.value : val
-        const checked = isObject && isCheckbox ? coercer(event.target.checked) : undefined
+        const checked = isObject && (isCheckbox || isRadio) ? coercer(event.target.checked) : undefined
+
+        if (isArrayLike(this.form.fields[name])) {
+          if (isRadio) {
+            this.form.fields[name].map((item, i) => {
+              if (item.value === value) {
+                this.form.fields[name][i].checked = checked
+              } else {
+                this.form.fields[name][i].checked = false
+              }
+            })
+          }
+        }
 
         this.form.fields[name].value = coercer(value)
 
@@ -98,8 +124,10 @@ export default function formize ({formName, fields, schema = {}, permament = tru
           .reduce((obj, name) => ({
             ...obj,
             [name]:
-              Object.prototype.hasOwnProperty.call(this.form.fields[name], 'checked') ? this.form.fields[name].checked
-                : Object.prototype.hasOwnProperty.call(this.form.fields[name], 'value') ? this.form.fields[name].value
+              Object.prototype.hasOwnProperty.call(this.form.fields[name], 'type') && this.form.fields[name].type === 'checkbox'
+                ? this.form.fields[name].checked
+                : Object.prototype.hasOwnProperty.call(this.form.fields[name], 'value')
+                ? this.form.fields[name].value
                 : this.form.fields[name].defaultValue
           }), {})
 
