@@ -61,6 +61,7 @@ export default function formize ({formName, fields, schema = {}, permament = tru
                 ...obj,
                 [name]: form.fields[name].map(item => ({
                   name,
+                  'data-form-item-id': Math.random().toString(36).substr(2, 5),
                   onChange: e => this.setValue(e),
                   ...item
                 }))
@@ -105,6 +106,12 @@ export default function formize ({formName, fields, schema = {}, permament = tru
                 this.form.fields[name][i].checked = false
               }
             })
+          } else {
+            this.form.fields[name].map((item, i) => {
+              if (item['data-form-item-id'] === event.target.dataset.formItemId) {
+                this.form.fields[name][i].value = coercer(value)
+              }
+            })
           }
         }
 
@@ -115,6 +122,22 @@ export default function formize ({formName, fields, schema = {}, permament = tru
         }
       }
 
+      getValue(id, fields) {
+        if (/\[\]/.test(id)) {
+          return fields[id].map(item => item.value)
+        }
+
+        const hasType = Object.prototype.hasOwnProperty.call(fields[id], 'type')
+        const hasValue = Object.prototype.hasOwnProperty.call(fields[id], 'value')
+        const isCheckbox = fields[id].type
+
+        return hasType && isCheckbox === 'checkbox'
+          ? fields[id].checked
+          : hasValue
+          ? fields[id].value
+          : fields[id].defaultValue
+      }
+
       submit (event, cb) {
         event.preventDefault(cb)
 
@@ -123,12 +146,7 @@ export default function formize ({formName, fields, schema = {}, permament = tru
           .keys(this.form.fields)
           .reduce((obj, name) => ({
             ...obj,
-            [name]:
-              Object.prototype.hasOwnProperty.call(this.form.fields[name], 'type') && this.form.fields[name].type === 'checkbox'
-                ? this.form.fields[name].checked
-                : Object.prototype.hasOwnProperty.call(this.form.fields[name], 'value')
-                ? this.form.fields[name].value
-                : this.form.fields[name].defaultValue
+            [name]: this.getValue(name, this.form.fields)
           }), {})
 
         const coercedData = coercer(data)
