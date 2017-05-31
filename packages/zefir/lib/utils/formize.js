@@ -122,7 +122,7 @@ export default function formize ({formName, fields, schema = {}, permament = tru
         }
       }
 
-      getValue(id, fields) {
+      getValue (id, fields) {
         if (/\[\]/.test(id)) {
           return fields[id].map(item => item.value)
         }
