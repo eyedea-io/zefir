@@ -88,6 +88,23 @@ export default function formize ({formName, fields, schema = {}, permament = tru
         this.setValue = this.setValue.bind(this)
       }
 
+      createField (data) {
+        if (Array.isArray(data)) {
+          return data.map(item => ({
+            'data-form-item-id': Math.random().toString(36).substr(2, 5),
+            onChange: e => this.setValue(e),
+            ...item
+          }))
+        }
+
+        return {
+          value: '',
+          'data-form-item-id': Math.random().toString(36).substr(2, 5),
+          onChange: e => this.setValue(e),
+          ...data
+        }
+      }
+
       setValue (event, val) {
         const isObject = typeof event === 'object'
         const isCheckbox = isObject && event.target && event.target.type === 'checkbox'
@@ -178,7 +195,8 @@ export default function formize ({formName, fields, schema = {}, permament = tru
             fields: this.form.fields,
             errors: this.form.errors,
             submit: this.submit,
-            setValue: this.setValue
+            setValue: this.setValue,
+            createField: this.createField.bind(this)
           }
         })
       }
