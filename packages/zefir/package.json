@@ -4,7 +4,7 @@
   "description": "",
   "main": "./dist/server/zefir.js",
   "license": "MIT",
-  "repository": "eyedea/zefir",
+  "repository": "eyedea-io/zefir",
   "publishConfig": {
     "tag": "beta"
   },
