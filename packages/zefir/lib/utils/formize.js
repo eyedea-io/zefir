@@ -128,7 +128,13 @@ export default function formize ({formName, fields, schema = {}, permament = tru
           } else {
             this.form.fields[name].map((item, i) => {
               if (item['data-form-item-id'] === event.target.dataset.formItemId) {
-                this.form.fields[name][i].value = coercer(value)
+                const field = this.form.fields[name][i]
+                field.value = coercer(value)
+
+                if (field.type === 'file') {
+                  field['data-file'] = event.target.files[0]
+                  field.value = ''
+                }
               }
             })
           }
@@ -148,7 +154,9 @@ export default function formize ({formName, fields, schema = {}, permament = tru
 
       getValue (id, fields) {
         if (/\[\]/.test(id)) {
-          return fields[id].map(item => item.value)
+          return fields[id].map(item =>
+            item['data-file'] ? item['data-file'] : item.value
+          )
         }
 
         const hasType = Object.prototype.hasOwnProperty.call(fields[id], 'type')
