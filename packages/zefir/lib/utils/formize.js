@@ -106,6 +106,7 @@ export default function formize ({formName, fields, schema = {}, permament = tru
       }
 
       setValue (event, val) {
+        const isFile = event.target.type === 'file'
         const isObject = typeof event === 'object'
         const isCheckbox = isObject && event.target && event.target.type === 'checkbox'
         const isRadio = isObject && event.target && event.target.type === 'radio'
@@ -113,6 +114,7 @@ export default function formize ({formName, fields, schema = {}, permament = tru
         const name = isObject ? event.target.name : event
         const value = isObject ? event.target.value : val
         const checked = isObject && (isCheckbox || isRadio) ? coercer(event.target.checked) : undefined
+        const file = isObject && isFile ? event.target.files[0] : undefined
 
         if (isArrayLike(this.form.fields[name])) {
           if (isRadio) {
@@ -137,6 +139,11 @@ export default function formize ({formName, fields, schema = {}, permament = tru
         if (checked !== undefined) {
           this.form.fields[name].checked = checked
         }
+
+        if (file !== undefined) {
+          this.form.fields[name]['data-file'] = file
+          this.form.fields[name].value = ''
+        }
       }
 
       getValue (id, fields) {
@@ -150,6 +157,8 @@ export default function formize ({formName, fields, schema = {}, permament = tru
 
         return hasType && isCheckbox === 'checkbox'
           ? fields[id].checked
+          : fields[id]['data-file']
+          ? fields[id]['data-file']
           : hasValue
           ? fields[id].value
           : fields[id].defaultValue
