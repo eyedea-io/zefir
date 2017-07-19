@@ -112,7 +112,11 @@ export default async function createCompiler (dir, {dev = false, quiet = false, 
       }
     }),
     new CopyWebpackPlugin([
-      { from: 'src/static', to: 'static' }
+      {
+        context: resolve(__dirname, 'src', 'static'),
+        from: '**/*',
+        to: 'static'
+      }
     ]),
     new CaseSensitivePathPlugin()
   ]
