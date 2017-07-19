@@ -3,7 +3,7 @@
 ## Getting started 
 
 ```
-yarn add zefir react react-dom mobx mobx-react
+yarn add zefir@beta react react-dom mobx mobx-react
 
 ./node_modules/zefir/dist/bin/zefir init
 ```
