@@ -2,9 +2,11 @@
 
 ## Getting started 
 
-```
+```sh
 yarn add zefir@beta react react-dom mobx mobx-react
+```
 
+```sh
 ./node_modules/zefir/dist/bin/zefir init
 ```
 
