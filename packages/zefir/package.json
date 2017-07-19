@@ -84,6 +84,7 @@
     "react-dom": "^15.5.4",
     "react-hot-loader": "3.0.0-beta.6",
     "react-router-dom": "^4.0.0-beta.6",
+    "read-pkg": "^2.0.0",
     "source-map-support": "^0.4.15",
     "styled-jsx": "0.5.7",
     "url": "0.11.0",
@@ -94,6 +95,7 @@
     "webpack-hot-middleware": "^2.18.0",
     "whatwg-fetch": "^2.0.3",
     "write-file-webpack-plugin": "^4.0.2",
+    "write-pkg": "^3.1.0",
     "z-schema": "^3.17.0"
   },
   "devDependencies": {
