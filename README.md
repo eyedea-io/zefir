@@ -306,8 +306,8 @@ const Counter = ({state, actions}) =>
   <div>
     <div>Count: {state.count}</div>
 
-    <button onClick={actions.inc}>Increment<button>
-    <button onClick={actions.dec}>Decrement<button>
+    <button onClick={actions.inc}>Increment</button>
+    <button onClick={actions.dec}>Decrement</button>
   </div>
 
 Counter.state = {
@@ -331,8 +331,8 @@ const Counter = ({state, actions}) =>
   <div>
     <div>Count: {state.count}</div>
 
-    <button onClick={() => actions.inc(3)}>Increment<button>
-    <button onClick={() => actions.dec(2)}>Decrement<button>
+    <button onClick={() => actions.inc(3)}>Increment</button>
+    <button onClick={() => actions.dec(2)}>Decrement</button>
   </div>
 
 Counter.state = {
