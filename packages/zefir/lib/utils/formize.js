@@ -106,8 +106,8 @@ export default function formize ({formName, fields, schema = {}, permament = tru
       }
 
       setValue (event, val) {
-        const isFile = event.target.type === 'file'
         const isObject = typeof event === 'object'
+        const isFile = isObject && event.target && event.target.type === 'file'
         const isCheckbox = isObject && event.target && event.target.type === 'checkbox'
         const isRadio = isObject && event.target && event.target.type === 'radio'
 
