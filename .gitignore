@@ -3,3 +3,4 @@ packages/zefir-boilerplate
 packages/zefir-example-basic
 packages/zefir-test
 *.log
+.vscode
