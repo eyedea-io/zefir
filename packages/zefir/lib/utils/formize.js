@@ -197,15 +197,15 @@ export default function formize ({formName, fields, rules = {}, permament = true
             resolve(coercedData, event)
           } else {
             validate(coercedData, this.form.rules)
-              .then(data => {
-                onSuccess(data)
-                resolve(data)
+              .then(() => {
+                onSuccess(coercedData)
+                resolve(coercedData)
               })
               .catch(errors => {
                 this.form.errors.replace(errors)
 
                 onError(errors)
-                reject({errors, data}) // eslint-disable-line
+                reject({errors, data: coercedData}) // eslint-disable-line
               })
           }
         })
