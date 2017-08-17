@@ -154,7 +154,7 @@ export default function formize ({formName, fields, rules = {}, permament = true
       }
 
       getValue (id, fields) {
-        if (/\[\]/.test(id) || isArrayLike(fields[id])) {
+        if (/\[\]/.test(id) || (isArrayLike(fields[id]) && fields[id][0].type !== 'radio')) {
           return fields[id].map(item =>
             item['data-file'] ? item['data-file'] : item.value
           )
@@ -162,15 +162,15 @@ export default function formize ({formName, fields, rules = {}, permament = true
 
         const hasType = Object.prototype.hasOwnProperty.call(fields[id], 'type')
         const hasValue = Object.prototype.hasOwnProperty.call(fields[id], 'value')
-        const isCheckbox = fields[id].type
+        const type = fields[id].type
 
-        return hasType && isCheckbox === 'checkbox'
+        return hasType && type === 'checkbox'
           ? fields[id].checked
           : fields[id]['data-file']
           ? fields[id]['data-file']
           : hasValue
           ? fields[id].value
-          : fields[id].defaultValue
+          : fields[id].defaultValue || null
       }
 
       submit (event, onSuccess, onError) {
@@ -200,7 +200,6 @@ export default function formize ({formName, fields, rules = {}, permament = true
               .then(data => {
                 onSuccess(data)
                 resolve(data)
-                console.log(1)
               })
               .catch(errors => {
                 this.form.errors.replace(errors)
