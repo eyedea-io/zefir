@@ -1,18 +1,12 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import coercer from 'coercer'
-import ZSchema from 'z-schema'
+import get from 'lodash.get'
 import {observer} from 'mobx-react'
+import {validate} from 'syncano-validate'
 import {extendObservable, observable, isArrayLike} from 'mobx'
-import * as FormRules from './formize.rules'
 
-export default function formize ({formName, fields, schema = {}, permament = true}) {
-  const validator = new ZSchema({
-    customValidator: (Report, Schema, Values) => {
-      Object.keys(FormRules).forEach(rule => FormRules[rule](Report, Schema, Values))
-    }
-  })
-
+export default function formize ({formName, fields, rules = {}, permament = true}) {
   return function (ComposedComponent) {
     class Form extends Component {
       static propTypes = {
@@ -38,8 +32,8 @@ export default function formize ({formName, fields, schema = {}, permament = tru
 
         const form = {
           fields: {},
-          errors: {},
-          schema
+          errors: observable.map({}),
+          rules
         }
 
         switch (typeof fields) {
@@ -50,7 +44,7 @@ export default function formize ({formName, fields, schema = {}, permament = tru
             form.fields = fields
             break
           default:
-            throw new Error('Property "fields" is required and must be function or object')
+            throw new Error('Property "fields" is required and must be a function or an object')
         }
 
         form.fields = Object
@@ -61,6 +55,7 @@ export default function formize ({formName, fields, schema = {}, permament = tru
                 ...obj,
                 [name]: form.fields[name].map(item => ({
                   name,
+                  value: '',
                   'data-form-item-id': Math.random().toString(36).substr(2, 5),
                   onChange: e => this.setValue(e),
                   ...item
@@ -91,6 +86,7 @@ export default function formize ({formName, fields, schema = {}, permament = tru
       createField (data) {
         if (Array.isArray(data)) {
           return data.map(item => ({
+            value: '',
             'data-form-item-id': Math.random().toString(36).substr(2, 5),
             onChange: e => this.setValue(e),
             ...item
@@ -106,54 +102,59 @@ export default function formize ({formName, fields, schema = {}, permament = tru
       }
 
       setValue (event, val) {
-        const isObject = typeof event === 'object'
-        const isFile = isObject && event.target && event.target.type === 'file'
-        const isCheckbox = isObject && event.target && event.target.type === 'checkbox'
-        const isRadio = isObject && event.target && event.target.type === 'radio'
+        const name = get(event, 'target.name', event)
+        let entity = get(this.form.fields, name)
 
-        const name = isObject ? event.target.name : event
-        const value = isObject ? event.target.value : val
-        const checked = isObject && (isCheckbox || isRadio) ? coercer(event.target.checked) : undefined
-        const file = isObject && isFile ? event.target.files[0] : undefined
+        if (entity === undefined) {
+          const [fieldName, fieldId] = name.split('.')
 
-        if (isArrayLike(this.form.fields[name])) {
-          if (isRadio) {
-            this.form.fields[name].map((item, i) => {
-              if (item.value === value) {
-                this.form.fields[name][i].checked = checked
-              } else {
-                this.form.fields[name][i].checked = false
-              }
-            })
-          } else {
-            this.form.fields[name].map((item, i) => {
-              if (item['data-form-item-id'] === event.target.dataset.formItemId) {
-                const field = this.form.fields[name][i]
-                field.value = coercer(value)
+          entity = this.form.fields[fieldName]
 
-                if (field.type === 'file') {
-                  field['data-file'] = event.target.files[0]
-                  field.value = ''
-                }
-              }
-            })
-          }
+          entity = entity.find(item => item['data-form-item-id'] === fieldId)
         }
 
-        this.form.fields[name].value = coercer(value)
+        const type = get(event, 'target.type', entity.type)
 
-        if (checked !== undefined) {
-          this.form.fields[name].checked = checked
+        const isFile = type === 'file'
+        const isCheckbox = type === 'checkbox'
+        const isRadio = type === 'radio'
+
+        const value = get(event, 'target.value', val)
+        const file = get(event, 'target.files.0', undefined)
+        const checked = (isCheckbox || isRadio) ? coercer(get(event, 'target.checked')) : undefined
+
+        const isArrayField = isArrayLike(entity)
+
+        if (isArrayField && isRadio) {
+          entity.forEach((item, i) => {
+            entity[i].checked = item.value === value ? checked : false
+          })
+        } else if (isArrayField) {
+          entity.map((item, i) => {
+            if (item['data-form-item-id'] === event.target.dataset.formItemId) {
+              const field = entity[i]
+
+              field.value = coercer(value)
+
+              if (isFile) {
+                field['data-file'] = file
+                field.value = ''
+              }
+            }
+          })
         }
+
+        entity.value = coercer(value)
+        entity.checked = checked !== undefined ? checked : undefined
 
         if (file !== undefined) {
-          this.form.fields[name]['data-file'] = file
-          this.form.fields[name].value = ''
+          entity['data-file'] = file
+          entity.value = ''
         }
       }
 
       getValue (id, fields) {
-        if (/\[\]/.test(id)) {
+        if (/\[\]/.test(id) || isArrayLike(fields[id])) {
           return fields[id].map(item =>
             item['data-file'] ? item['data-file'] : item.value
           )
@@ -172,8 +173,11 @@ export default function formize ({formName, fields, schema = {}, permament = tru
           : fields[id].defaultValue
       }
 
-      submit (event, cb) {
-        event.preventDefault(cb)
+      submit (event, onSuccess, onError) {
+        event.preventDefault(onSuccess)
+
+        onSuccess = typeof onSuccess === 'function' ? onSuccess : () => {}
+        onError = typeof onError === 'function' ? onError : () => {}
 
         // Get object with fieldName: fieldValue items.
         const data = Object
@@ -185,24 +189,27 @@ export default function formize ({formName, fields, schema = {}, permament = tru
 
         const coercedData = coercer(data)
 
-        if (this.form.schema.length === 0) {
-          cb(coercedData, event)
-        } else {
-          const isValid = validator.validate(data, this.form.schema)
-          const errors = validator.getLastErrors()
+        this.form.errors.clear()
 
-          this.form.errors = {}
+        return new Promise((resolve, reject) => {
+          if (this.form.rules.length === 0) {
+            onSuccess(coercedData, event)
+            resolve(coercedData, event)
+          } else {
+            validate(coercedData, this.form.rules)
+              .then(data => {
+                onSuccess(data)
+                resolve(data)
+                console.log(1)
+              })
+              .catch(errors => {
+                this.form.errors.replace(errors)
 
-          if (errors) {
-            errors.forEach(({path, message}) => {
-              this.form.errors[path.substr(2)] = message
-            })
+                onError(errors)
+                reject({errors, data}) // eslint-disable-line
+              })
           }
-
-          if (isValid) {
-            cb(coercedData, event)
-          }
-        }
+        })
       }
 
       render () {
