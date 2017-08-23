@@ -88,7 +88,7 @@
     "read-pkg": "^2.0.0",
     "source-map-support": "^0.4.15",
     "styled-jsx": "0.5.7",
-    "syncano-validate": "^0.3.1",
+    "syncano-validate": "^0.4.0",
     "url": "0.11.0",
     "url-loader": "^0.5.8",
     "uuid": "3.0.1",

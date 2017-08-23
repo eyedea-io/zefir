@@ -6,7 +6,9 @@ import {observer} from 'mobx-react'
 import {validate} from 'syncano-validate'
 import {extendObservable, observable, isArrayLike} from 'mobx'
 
-export default function formize ({formName, fields, rules = {}, permament = true}) {
+export default function formize ({
+  formName, fields, rules = {}, messages = {}, permament = true
+}) {
   return function (ComposedComponent) {
     class Form extends Component {
       static propTypes = {
@@ -33,6 +35,7 @@ export default function formize ({formName, fields, rules = {}, permament = true
         const form = {
           fields: {},
           errors: observable.map({}),
+          messages,
           rules
         }
 
@@ -196,7 +199,7 @@ export default function formize ({formName, fields, rules = {}, permament = true
             onSuccess(coercedData, event)
             resolve(coercedData, event)
           } else {
-            validate(coercedData, this.form.rules)
+            validate(coercedData, this.form.rules, this.form.messages)
               .then(() => {
                 onSuccess(coercedData)
                 resolve(coercedData)
