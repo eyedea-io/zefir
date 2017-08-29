@@ -7,7 +7,11 @@ import {validate} from 'syncano-validate'
 import {extendObservable, observable, isArrayLike} from 'mobx'
 
 export default function formize ({
-  formName, fields, rules = {}, messages = {}, permament = true
+  formName,
+  fields,
+  rules = {},
+  messages = {},
+  permament = true
 }) {
   return function (ComposedComponent) {
     class Form extends Component {
@@ -47,35 +51,35 @@ export default function formize ({
             form.fields = fields
             break
           default:
-            throw new Error('Property "fields" is required and must be a function or an object')
+            throw new Error(
+              'Property "fields" is required and must be a function or an object'
+            )
         }
 
-        form.fields = Object
-          .keys(form.fields)
-          .reduce((obj, name) => {
-            if (Array.isArray(form.fields[name])) {
-              return {
-                ...obj,
-                [name]: form.fields[name].map(item => ({
-                  name,
-                  value: '',
-                  'data-form-item-id': Math.random().toString(36).substr(2, 5),
-                  onChange: e => this.setValue(e),
-                  ...item
-                }))
-              }
-            }
-
+        form.fields = Object.keys(form.fields).reduce((obj, name) => {
+          if (Array.isArray(form.fields[name])) {
             return {
               ...obj,
-              [name]: {
+              [name]: form.fields[name].map(item => ({
                 name,
                 value: '',
+                'data-form-item-id': Math.random().toString(36).substr(2, 5),
                 onChange: e => this.setValue(e),
-                ...form.fields[name]
-              }
+                ...item
+              }))
             }
-          }, {})
+          }
+
+          return {
+            ...obj,
+            [name]: {
+              name,
+              value: '',
+              onChange: e => this.setValue(e),
+              ...form.fields[name]
+            }
+          }
+        }, {})
 
         if (!context.stores.forms.get(formName) || !permament) {
           context.stores.forms.set(formName, form)
@@ -124,13 +128,21 @@ export default function formize ({
 
         const value = get(event, 'target.value', val)
         const file = get(event, 'target.files.0', undefined)
-        const checked = (isCheckbox || isRadio) ? coercer(get(event, 'target.checked')) : undefined
+        const checked = isCheckbox || isRadio
+          ? coercer(get(event, 'target.checked'))
+          : undefined
 
         const isArrayField = isArrayLike(entity)
 
         if (isArrayField && isRadio) {
           entity.forEach((item, i) => {
             entity[i].checked = item.value === value ? checked : false
+          })
+        } else if (isArrayField && isCheckbox) {
+          entity.forEach((item, i) => {
+            if (item.value === value) {
+              entity[i].checked = checked
+            }
           })
         } else if (isArrayField) {
           entity.map((item, i) => {
@@ -157,23 +169,38 @@ export default function formize ({
       }
 
       getValue (id, fields) {
-        if (/\[\]/.test(id) || (isArrayLike(fields[id]) && fields[id][0].type !== 'radio')) {
-          return fields[id].map(item =>
-            item['data-file'] ? item['data-file'] : item.value
-          )
+        const isArray = /\[\]/.test(id) || isArrayLike(fields[id])
+
+        if (isArray) {
+          const item = fields[id][0]
+
+          if (item === undefined) {
+            return []
+          } else if (item.type !== 'radio') {
+            if (item.type === 'checkbox') {
+              return fields[id]
+                .map(item => (item.checked ? item.value : undefined))
+                .filter(Boolean)
+            }
+
+            return fields[id].map(
+              item => (item['data-file'] ? item['data-file'] : item.value)
+            )
+          }
         }
 
         const hasType = Object.prototype.hasOwnProperty.call(fields[id], 'type')
-        const hasValue = Object.prototype.hasOwnProperty.call(fields[id], 'value')
+        const hasValue = Object.prototype.hasOwnProperty.call(
+          fields[id],
+          'value'
+        )
         const type = fields[id].type
 
         return hasType && type === 'checkbox'
           ? fields[id].checked
           : fields[id]['data-file']
-          ? fields[id]['data-file']
-          : hasValue
-          ? fields[id].value
-          : fields[id].defaultValue || null
+              ? fields[id]['data-file']
+              : hasValue ? fields[id].value : fields[id].defaultValue || null
       }
 
       submit (event, onSuccess, onError) {
@@ -183,12 +210,13 @@ export default function formize ({
         onError = typeof onError === 'function' ? onError : () => {}
 
         // Get object with fieldName: fieldValue items.
-        const data = Object
-          .keys(this.form.fields)
-          .reduce((obj, name) => ({
+        const data = Object.keys(this.form.fields).reduce(
+          (obj, name) => ({
             ...obj,
             [name]: this.getValue(name, this.form.fields)
-          }), {})
+          }),
+          {}
+        )
 
         const coercedData = coercer(data)
 
