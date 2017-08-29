@@ -14,7 +14,10 @@ export default function connect (ComposedComponent) {
 
   const publish = (event, payload) => {
     if (data.events[event]) {
-      const result = data.events[event](data.state, data.actions, payload)
+      const result = data.events[event](payload, {
+        state: data.state,
+        actions: data.actions
+      })
 
       return result === undefined ? payload : result
     }
@@ -25,14 +28,17 @@ export default function connect (ComposedComponent) {
   class Connect extends Component {
     constructor (props, context) {
       super(props, context)
-
-      const {services, stores, emit, router} = context;
-
-      ['events', 'state', 'actions'].forEach(item => {
+      const {services, stores, emit, router} = context
+      ;['events', 'state', 'actions'].forEach(item => {
         const fn = ComposedComponent[item]
 
         if (typeof fn === 'function') {
-          data[item] = fn(stores, services, {emit, router})
+          data[item] = fn(props, {
+            stores,
+            services,
+            emit,
+            router
+          })
         } else if (fn) {
           data[item] = fn
         }
@@ -45,17 +51,26 @@ export default function connect (ComposedComponent) {
       Object.keys(data.actions).map(key => {
         const action = data.actions[key]
 
-        data.actions[key] = (payload) => {
+        data.actions[key] = payload => {
           if (typeof action === 'function') {
             publish('action', {
               name: key,
               data: payload
             })
 
-            let result = action(data.state, data.actions, payload)
+            let result = action(payload, {
+              state: data.state,
+              actions: data.actions
+            })
 
-            if (result !== null && result.then === undefined) {
+            const hasResult = result !== null && result !== undefined
+
+            if (hasResult && result.then === undefined) {
               data.state = Object.assign(data.state, publish('update', result))
+            } else if (hasResult && result.then !== undefined) {
+              result.then(res => {
+                data.state = Object.assign(data.state, publish('update', res))
+              })
             }
 
             return result
@@ -92,7 +107,10 @@ export default function connect (ComposedComponent) {
     }
 
     render () {
-      const view = React.createElement(observer(ComposedComponent), this.customProps)
+      const view = React.createElement(
+        observer(ComposedComponent),
+        this.customProps
+      )
 
       return publish('render', view)
     }

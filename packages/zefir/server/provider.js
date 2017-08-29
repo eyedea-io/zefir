@@ -44,10 +44,13 @@ class Provider extends Component {
       .forEach(serviceName => {
         this.services[serviceName].emit = emit.bind(null, this.listeners)
       })
+
+    this.emit = emit.bind(null, this.listeners)
   }
 
   getChildContext () {
     return {
+      emit: this.emit,
       listeners: this.listeners,
       services: this.services,
       stores: this.stores
@@ -70,6 +73,7 @@ Provider.contextTypes = {
 }
 
 Provider.childContextTypes = {
+  emit: PropTypes.func.isRequired,
   listeners: PropTypes.array.isRequired,
   services: PropTypes.object.isRequired,
   stores: PropTypes.object.isRequired
