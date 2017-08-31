@@ -236,18 +236,18 @@ export default function formize ({
         return new Promise((resolve, reject) => {
           if (this.form.rules.length === 0) {
             onSuccess(coercedData, event)
-            resolve(coercedData, event)
+            resolve({data: coercedData})
           } else {
             validate(coercedData, this.form.rules, this.form.messages)
               .then(() => {
                 onSuccess(coercedData)
-                resolve(coercedData)
+                resolve({data: coercedData})
               })
               .catch(errors => {
                 this.form.errors.replace(errors)
 
                 onError(errors)
-                reject({errors, data: coercedData}) // eslint-disable-line
+                resolve({errors, data: coercedData}) // eslint-disable-line
               })
           }
         })
