@@ -12,31 +12,14 @@ export default function connect (ComposedComponent) {
     actions: {}
   }
 
-  const publish = (event, payload) => {
-    if (data.events[event]) {
-      const result = data.events[event](data.state, data.actions, payload)
-
-      return result === undefined ? payload : result
-    }
-
-    return payload
-  }
-
   class Connect extends Component {
     constructor (props, context) {
       super(props, context)
+      const {services, stores, emit, router} = context
 
-      const {services, stores, emit, router} = context;
-
-      ['events', 'state', 'actions'].forEach(item => {
-        const fn = ComposedComponent[item]
-
-        if (typeof fn === 'function') {
-          data[item] = fn(stores, services, {emit, router})
-        } else if (fn) {
-          data[item] = fn
-        }
-      })
+      data.events = ComposedComponent.events || {}
+      data.state = ComposedComponent.state || {}
+      data.actions = ComposedComponent.actions || {}
 
       if (data.state) {
         data.state = observable(data.state)
@@ -45,17 +28,33 @@ export default function connect (ComposedComponent) {
       Object.keys(data.actions).map(key => {
         const action = data.actions[key]
 
-        data.actions[key] = (payload) => {
+        data.actions[key] = payload => {
           if (typeof action === 'function') {
-            publish('action', {
+            this.publish('action', {
               name: key,
               data: payload
             })
 
-            let result = action(data.state, data.actions, payload)
+            let result = action({
+              state: data.state,
+              actions: data.actions,
+              ...this.customProps
+            }, payload)
 
-            if (result !== null && result.then === undefined) {
-              data.state = Object.assign(data.state, publish('update', result))
+            const hasResult = result !== null && result !== undefined
+
+            if (hasResult && result.then === undefined) {
+              data.state = Object.assign(
+                data.state,
+                this.publish('update', result)
+              )
+            } else if (hasResult && result.then !== undefined) {
+              result.then(res => {
+                data.state = Object.assign(
+                  data.state,
+                  this.publish('update', res)
+                )
+              })
             }
 
             return result
@@ -71,6 +70,23 @@ export default function connect (ComposedComponent) {
       this.customProps = {...props, services, stores, emit, router}
     }
 
+    publish = (event, payload) => {
+      if (data.events[event]) {
+        const result = data.events[event](
+          {
+            state: data.state,
+            actions: data.actions,
+            ...this.customProps
+          },
+          payload
+        )
+
+        return result === undefined ? payload : result
+      }
+
+      return payload
+    }
+
     componentWillMount = () => {
       if (ComposedComponent.init) {
         const newProps = ComposedComponent.init(this.customProps)
@@ -79,22 +95,28 @@ export default function connect (ComposedComponent) {
           this.customProps = newProps
         }
       }
-
-      publish('create')
+      this.publish('create')
     }
 
     componentDidMount = () => {
-      publish('insert')
+      this.publish('insert')
     }
 
     componentWillUnmount = () => {
-      publish('remove')
+      this.publish('remove')
     }
 
     render () {
-      const view = React.createElement(observer(ComposedComponent), this.customProps)
+      const View = observer(() => {
+        this.publish('update')
 
-      return publish('render', view)
+        return this.publish(
+          'render',
+          React.createElement(observer(ComposedComponent), this.customProps)
+        )
+      })
+
+      return <View />
     }
   }
 
