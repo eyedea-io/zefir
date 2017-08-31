@@ -8,8 +8,7 @@ import {
   extendObservable,
   observable,
   isArrayLike,
-  runInAction,
-  action
+  runInAction
 } from 'mobx'
 
 export default function formize ({
