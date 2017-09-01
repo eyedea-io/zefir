@@ -214,7 +214,7 @@ export default function formize ({
       }
 
       submit (event, onSuccess, onError) {
-        event.preventDefault(onSuccess)
+        event.preventDefault()
 
         onSuccess = typeof onSuccess === 'function' ? onSuccess : () => {}
         onError = typeof onError === 'function' ? onError : () => {}

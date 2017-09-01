@@ -38,7 +38,7 @@ export default function connect (ComposedComponent) {
             let result = action({
               state: data.state,
               actions: data.actions,
-              ...this.customProps
+              ...this.customUnmodifiedProps
             }, payload)
 
             const hasResult = result !== null && result !== undefined
@@ -68,6 +68,7 @@ export default function connect (ComposedComponent) {
       })
 
       this.customProps = {...props, services, stores, emit, router}
+      this.customUnmodifiedProps = this.customProps
     }
 
     publish = (event, payload) => {
@@ -76,7 +77,7 @@ export default function connect (ComposedComponent) {
           {
             state: data.state,
             actions: data.actions,
-            ...this.customProps
+            ...this.customUnmodifiedProps
           },
           payload
         )
