@@ -240,13 +240,13 @@ export default function formize ({
             validate(coercedData, this.form.rules, this.form.messages)
               .then(() => {
                 onSuccess(coercedData)
-                resolve({data: coercedData})
+                resolve(coercedData)
               })
               .catch(errors => {
                 this.form.errors.replace(errors)
 
                 onError(errors)
-                resolve({errors, data: coercedData}) // eslint-disable-line
+                reject(errors) // eslint-disable-line
               })
           }
         })

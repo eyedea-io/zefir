@@ -95,6 +95,7 @@ export default function connect (ComposedComponent) {
           this.customProps = newProps
         }
       }
+
       this.publish('create')
     }
 
