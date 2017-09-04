@@ -25,6 +25,20 @@ export default function connect (ComposedComponent) {
         data.state = observable(data.state)
       }
 
+      if (ComposedComponent.isConnected === undefined) {
+        this.bindActions(data)
+      }
+
+      props = Object.assign({}, props, {
+        state: data.state,
+        actions: data.actions
+      })
+
+      this.customProps = {...props, services, stores, emit, router}
+      this.customUnmodifiedProps = this.customProps
+    }
+
+    bindActions (data) {
       Object.keys(data.actions).map(key => {
         const action = data.actions[key]
 
@@ -35,11 +49,14 @@ export default function connect (ComposedComponent) {
               data: payload
             })
 
-            let result = action({
-              state: data.state,
-              actions: data.actions,
-              ...this.customUnmodifiedProps
-            }, payload)
+            let result = action(
+              {
+                state: data.state,
+                actions: data.actions,
+                ...this.customUnmodifiedProps
+              },
+              payload
+            )
 
             const hasResult = result !== null && result !== undefined
 
@@ -61,14 +78,6 @@ export default function connect (ComposedComponent) {
           }
         }
       })
-
-      props = Object.assign({}, props, {
-        state: data.state,
-        actions: data.actions
-      })
-
-      this.customProps = {...props, services, stores, emit, router}
-      this.customUnmodifiedProps = this.customProps
     }
 
     publish = (event, payload) => {
@@ -117,6 +126,8 @@ export default function connect (ComposedComponent) {
           React.createElement(observer(ComposedComponent), this.customProps)
         )
       })
+
+      ComposedComponent.isConnected = true
 
       return <View />
     }
