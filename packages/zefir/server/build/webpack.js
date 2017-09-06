@@ -113,8 +113,7 @@ export default async function createCompiler (dir, {dev = false, quiet = false, 
     }),
     new CopyWebpackPlugin([
       {
-        context: resolve(__dirname, 'src', 'static'),
-        from: '**/*',
+        from: 'src/static',
         to: 'static'
       }
     ]),
