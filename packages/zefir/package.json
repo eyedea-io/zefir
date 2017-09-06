@@ -1,6 +1,6 @@
 {
   "name": "zefir",
-  "version": "1.0.0-beta.37",
+  "version": "1.0.0-beta.38",
   "description": "",
   "main": "./dist/server/zefir.js",
   "license": "MIT",
