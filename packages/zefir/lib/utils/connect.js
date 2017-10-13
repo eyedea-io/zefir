@@ -15,7 +15,10 @@ export default function connect (ComposedComponent) {
   class Connect extends Component {
     constructor (props, context) {
       super(props, context)
+
       const {services, stores, emit, router} = context
+
+      ComposedComponent._actions = {...ComposedComponent.actions}
 
       data.events = ComposedComponent.events || {}
       data.state = ComposedComponent.state || {}
@@ -29,18 +32,21 @@ export default function connect (ComposedComponent) {
         this.bindActions(data)
       }
 
-      props = Object.assign({}, props, {
+      this.customProps = {
+        ...props,
         state: data.state,
-        actions: data.actions
-      })
-
-      this.customProps = {...props, services, stores, emit, router}
+        actions: data.actions,
+        services,
+        stores,
+        emit,
+        router
+      }
       this.customUnmodifiedProps = this.customProps
     }
 
     bindActions (data) {
-      Object.keys(data.actions).map(key => {
-        const action = data.actions[key]
+      Object.keys(data.actions).forEach(key => {
+        let action = data.actions[key]
 
         data.actions[key] = payload => {
           if (typeof action === 'function') {
@@ -114,6 +120,8 @@ export default function connect (ComposedComponent) {
     }
 
     componentWillUnmount = () => {
+      ComposedComponent.isConnected = undefined
+      ComposedComponent.actions = ComposedComponent._actions
       this.publish('remove')
     }
 

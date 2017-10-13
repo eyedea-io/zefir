@@ -6,7 +6,9 @@ import {observer} from 'mobx-react'
 import {validate} from 'syncano-validate'
 import {
   extendObservable,
+  observe,
   observable,
+  isObservable,
   isArrayLike,
   runInAction
 } from 'mobx'
@@ -16,8 +18,10 @@ export default function formize ({
   fields,
   rules = {},
   messages = {},
+  persistErrors = true,
   permament = true
 }) {
+  // TODO: remove permament
   return function (ComposedComponent) {
     class Form extends Component {
       static propTypes = {
@@ -32,6 +36,37 @@ export default function formize ({
 
       constructor (props, context) {
         super(props, context)
+      }
+
+      componentWillMount () {
+        this._initializeForm()
+      }
+
+      componentWillUnmount () {
+        this.context.stores.forms.delete(formName)
+      }
+
+      _watch (obj, key, twoWayDataBinding = true) {
+        let value = observable()
+
+        value.set(obj[key])
+
+        observe(obj, change => {
+          value.set(change.newValue)
+        })
+
+        if (twoWayDataBinding) {
+          observe(value, change => {
+            obj[key] = change.newValue
+          })
+        }
+
+        return value
+      }
+
+      _initializeForm() {
+        const {context, props} = this
+
         runInAction('initialize forms', () => {
           if (!formName && permament) {
             throw new Error('Property "formName" is required')
@@ -50,7 +85,7 @@ export default function formize ({
 
           switch (typeof fields) {
             case 'function':
-              form.fields = fields({...props, ...context})
+              form.fields = fields({...props, ...context, watch: this._watch})
               break
             case 'object':
               form.fields = fields
@@ -143,12 +178,12 @@ export default function formize ({
 
           if (isArrayField && isRadio) {
             entity.forEach((item, i) => {
-              entity[i].checked = item.value === value ? checked : false
+              this._updateChecked(entity[i], item.value === value ? checked : false)
             })
           } else if (isArrayField && isCheckbox) {
             entity.forEach((item, i) => {
               if (item.value === value) {
-                entity[i].checked = checked
+                this._updateChecked(entity[i], checked)
               }
             })
           } else if (isArrayField) {
@@ -158,7 +193,7 @@ export default function formize ({
               ) {
                 const field = entity[i]
 
-                field.value = coercer(value)
+                this._updateValue(field, value)
 
                 if (isFile) {
                   field['data-file'] = file
@@ -168,14 +203,46 @@ export default function formize ({
             })
           }
 
-          entity.value = coercer(value)
-          entity.checked = checked !== undefined ? checked : undefined
+          this._updateValue(entity, value)
+          this._updateChecked(entity, checked !== undefined ? checked : undefined)
 
           if (file !== undefined) {
             entity['data-file'] = file
             entity.value = ''
           }
         })
+      }
+
+      _clearErrorIfNeeded(field) {
+        if (persistErrors === false && field.name) {
+          try {
+            this.form.errors.delete(field.name)
+          } catch (err) {
+            console.log('Report this error to Kasper', err)
+          }
+        }
+      }
+
+      _updateChecked(field, checked) {
+        if (isObservable(field.checked)) {
+          field.checked.set(checked)
+        } else {
+          field.checked = coercer(checked)
+        }
+
+        this._clearErrorIfNeeded(field)
+      }
+
+      _updateValue(field, value) {
+        const val = coercer(value)
+
+        if (isObservable(field.value)) {
+          field.value.set(value)
+        } else {
+          field.value = coercer(value)
+        }
+
+        this._clearErrorIfNeeded(field)
       }
 
       getValue (id, fields) {
@@ -250,6 +317,11 @@ export default function formize ({
               })
           }
         })
+      }
+
+      // TODO: Should add field to form or push field to array field.
+      addField (name, field) {
+
       }
 
       render () {
