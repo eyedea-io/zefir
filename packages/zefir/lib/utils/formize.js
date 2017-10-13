@@ -34,10 +34,6 @@ export default function formize ({
         stores: PropTypes.object
       }
 
-      constructor (props, context) {
-        super(props, context)
-      }
-
       componentWillMount () {
         this._initializeForm()
       }
@@ -64,7 +60,7 @@ export default function formize ({
         return value
       }
 
-      _initializeForm() {
+      _initializeForm () {
         const {context, props} = this
 
         runInAction('initialize forms', () => {
@@ -213,7 +209,7 @@ export default function formize ({
         })
       }
 
-      _clearErrorIfNeeded(field) {
+      _clearErrorIfNeeded (field) {
         if (persistErrors === false && field.name) {
           try {
             this.form.errors.delete(field.name)
@@ -223,23 +219,23 @@ export default function formize ({
         }
       }
 
-      _updateChecked(field, checked) {
+      _updateChecked (field, checked) {
         if (isObservable(field.checked)) {
           field.checked.set(checked)
         } else {
-          field.checked = coercer(checked)
+          field.checked = checked
         }
 
         this._clearErrorIfNeeded(field)
       }
 
-      _updateValue(field, value) {
+      _updateValue (field, value) {
         const val = coercer(value)
 
         if (isObservable(field.value)) {
-          field.value.set(value)
+          field.value.set(val)
         } else {
-          field.value = coercer(value)
+          field.value = val
         }
 
         this._clearErrorIfNeeded(field)
