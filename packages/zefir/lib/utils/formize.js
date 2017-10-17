@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import coercer from 'coercer'
 import get from 'lodash.get'
+import set from 'lodash.set'
 import {observer} from 'mobx-react'
 import {validate} from 'syncano-validate'
 import {
@@ -45,16 +46,12 @@ export default function formize ({
       _watch (obj, key, twoWayDataBinding = true) {
         let value = observable()
 
-        value.set(obj[key])
+        value.set(get(obj, key))
 
-        observe(obj, change => {
-          value.set(change.newValue)
-        })
+        observe(obj, change => value.set(get(obj, key)))
 
         if (twoWayDataBinding) {
-          observe(value, change => {
-            obj[key] = change.newValue
-          })
+          observe(value, change => set(obj, key, change.newValue))
         }
 
         return value
