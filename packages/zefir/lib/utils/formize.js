@@ -53,7 +53,7 @@ export default function formize ({
           observe(value, change => set(obj, key, change.newValue))
         }
 
-        return toJS(value)
+        return value
       }
 
       _initializeForm () {
@@ -282,7 +282,7 @@ export default function formize ({
         const data = Object.keys(this.form.fields).reduce(
           (obj, name) => ({
             ...obj,
-            [name]: this.getValue(name, this.form.fields)
+            [name]: toJS(this.getValue(name, this.form.fields))
           }),
           {}
         )
