@@ -115,7 +115,8 @@ export default async function createCompiler(
     }),
     new CopyWebpackPlugin([
       {
-        from: 'src/static',
+        context: join(dir, 'src/static'),
+        from: '**/*',
         to: 'static'
       }
     ]),
