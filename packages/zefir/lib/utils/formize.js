@@ -11,7 +11,8 @@ import {
   observable,
   isObservable,
   isArrayLike,
-  runInAction
+  runInAction,
+  toJS
 } from 'mobx'
 
 export default function formize ({
@@ -44,11 +45,9 @@ export default function formize ({
       }
 
       _watch (obj, key, twoWayDataBinding = true) {
-        let value = observable()
+        const value = observable(get(obj, key, ''))
 
-        value.set(get(obj, key))
-
-        observe(obj, change => value.set(get(obj, key)))
+        observe(obj, change => value.set(get(obj, key, '')))
 
         if (twoWayDataBinding) {
           observe(value, change => set(obj, key, change.newValue))
@@ -283,7 +282,7 @@ export default function formize ({
         const data = Object.keys(this.form.fields).reduce(
           (obj, name) => ({
             ...obj,
-            [name]: this.getValue(name, this.form.fields)
+            [name]: toJS(this.getValue(name, this.form.fields))
           }),
           {}
         )
