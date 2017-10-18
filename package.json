@@ -16,8 +16,8 @@
     "utils.js"
   ],
   "scripts": {
-    "build": "fly",
-    "release": "fly release",
+    "build": "taskr",
+    "release": "taskr release",
     "prepublish": "npm run release",
     "precommit": "lint-staged",
     "lint": "standard --fix --env mocha --parser babel-eslint",
@@ -93,17 +93,17 @@
     "write-pkg": "^3.1.0"
   },
   "devDependencies": {
+    "@taskr/babel": "1.1.0",
+    "@taskr/clear": "1.1.0",
+    "@taskr/esnext": "1.1.0",
+    "@taskr/watch": "1.1.0",
     "babel-eslint": "^8.0.1",
-    "fly": "^2.0.6",
-    "fly-babel": "2.1.1",
-    "fly-clear": "1.0.1",
-    "fly-esnext": "^2.0.1",
-    "fly-watch": "1.1.1",
     "husky": "0.14.3",
     "lint-staged": "4.3.0",
     "node-notifier": "^5.1.2",
     "prettier": "1.7.4",
-    "standard": "10.0.3"
+    "standard": "10.0.3",
+    "taskr": "1.1.0"
   },
   "peerDependencies": {
     "mobx": "^3.3.1",
