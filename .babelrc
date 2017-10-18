@@ -7,18 +7,5 @@
     "transform-object-rest-spread",
     "transform-class-properties",
     "transform-runtime"
-  ],
-  "env": {
-    "test-build": {
-      "plugins": [
-        "istanbul"
-      ]
-    },
-    "test": {
-      "presets": [
-        "es2015",
-        "./babel"
-       ]
-    }
-  }
+  ]
 }
