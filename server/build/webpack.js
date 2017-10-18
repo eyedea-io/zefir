@@ -43,7 +43,7 @@ export default async function createCompiler(
     ? ['react-hot-loader/patch', 'webpack-hot-middleware/client']
     : []
 
-  let minChunks
+  // let minChunks
 
   const entry = async () => {
     const entries = {
@@ -107,10 +107,8 @@ export default async function createCompiler(
     new webpack.optimize.CommonsChunkPlugin({
       name: 'commons',
       filename: 'commons.js',
-      minChunks(module, count) {
-        // NOTE: it depends on the fact that the entry funtion is always called
-        // before applying CommonsChunkPlugin
-        return count >= minChunks
+      minChunks(module) {
+        return module.context && module.context.indexOf('node_modules') !== -1
       }
     }),
     new CopyWebpackPlugin([
