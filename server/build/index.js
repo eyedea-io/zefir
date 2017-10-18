@@ -1,6 +1,5 @@
 import {tmpdir} from 'os'
 import {join} from 'path'
-import fs from 'mz/fs'
 import uuid from 'uuid'
 import del from 'del'
 import webpack from './webpack'
@@ -12,7 +11,6 @@ export default async function build(dir) {
 
   try {
     await runCompiler(compiler)
-    await writeBuildId(buildDir)
   } catch (err) {
     console.error(`> Failed to build on ${buildDir}`)
     throw err
@@ -42,10 +40,4 @@ function runCompiler(compiler) {
       resolve()
     })
   })
-}
-
-async function writeBuildId(dir) {
-  const buildIdPath = join(dir, '.zefir', 'BUILD_ID')
-  const buildId = uuid.v4()
-  await fs.writeFile(buildIdPath, buildId, 'utf8')
 }
