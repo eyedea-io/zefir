@@ -29,15 +29,17 @@ const addDevMiddlewares = (app, webpackConfig) => {
   })
 
   app.use(middleware)
-  app.use(webpackHotMiddleware(compiler, {
-    log: false
-  }))
+  app.use(
+    webpackHotMiddleware(compiler, {
+      log: false
+    })
+  )
 
   // Since webpackDevMiddleware uses memory-fs internally to store build
   // artifacts, we use it instead
   const fs = middleware.fileSystem
 
-  app.get('/static/*', function (req, res) {
+  app.get('/static/*', function(req, res) {
     try {
       const root = `${compiler.outputPath}/../src/static`
       const file = req.originalUrl.split('static/')[1].split('?')[0]

@@ -1,6 +1,6 @@
 import findBabelConfig from './find-config'
 
-export default function getBabelConfig (dir, dev) {
+export default function getBabelConfig(dir, dev) {
   const mainBabelOptions = {
     cacheDirectory: true,
     sourceMaps: dev ? 'both' : false,

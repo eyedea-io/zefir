@@ -7,12 +7,13 @@ import App from './app'
 
 const $root = document.getElementById('root')
 
-function render () {
-  ReactDOM.render((
+function render() {
+  ReactDOM.render(
     <AppContainer>
       <App />
-    </AppContainer>
-  ), $root)
+    </AppContainer>,
+    $root
+  )
 }
 
 render()
@@ -21,10 +22,11 @@ if (module.hot) {
   module.hot.accept('./app', () => {
     const NextApp = require('./app').default
 
-    ReactDOM.render((
+    ReactDOM.render(
       <AppContainer>
         <NextApp />
-      </AppContainer>
-    ), $root)
+      </AppContainer>,
+      $root
+    )
   })
 }

@@ -11,9 +11,7 @@ process.noDeprecation = true
 const dir = process.cwd()
 const babelQuery = getBabelConfig(dir, true)
 
-babelQuery.plugins = [
-  require.resolve('react-hot-loader/babel')
-]
+babelQuery.plugins = [require.resolve('react-hot-loader/babel')]
 
 const projectNodeModules = join(dir, 'node_modules')
 const zefirNodeModules = join(__dirname, '..', '..', '..', './node_modules')
@@ -35,28 +33,21 @@ module.exports = {
     publicPath: ''
   },
   resolve: {
-    modules: [
-      paths.appSrc,
-      projectNodeModules,
-      zefirNodeModules
-    ],
-    extensions: [
-      '.js',
-      '.jsx'
-    ],
+    modules: [paths.appSrc, projectNodeModules, zefirNodeModules],
+    extensions: ['.js', '.jsx'],
     alias: {
       _SRC_: join(dir, 'src'),
       'zefir/head': require.resolve(join(__dirname, '..', '..', 'lib', 'head')),
-      'zefir/utils': require.resolve(join(__dirname, '..', '..', 'lib', 'utils')),
-      'zefir/router': require.resolve(join(__dirname, '..', '..', 'lib', 'router'))
+      'zefir/utils': require.resolve(
+        join(__dirname, '..', '..', 'lib', 'utils')
+      ),
+      'zefir/router': require.resolve(
+        join(__dirname, '..', '..', 'lib', 'router')
+      )
     }
   },
   resolveLoader: {
-    modules: [
-      paths.appSrc,
-      projectNodeModules,
-      zefirNodeModules
-    ]
+    modules: [paths.appSrc, projectNodeModules, zefirNodeModules]
   },
   module: {
     rules: [

@@ -6,7 +6,7 @@ import del from 'del'
 import webpack from './webpack'
 import replaceCurrentBuild from './replace'
 
-export default async function build (dir) {
+export default async function build(dir) {
   const buildDir = join(tmpdir(), uuid.v4())
   const compiler = await webpack(dir, {buildDir})
 
@@ -24,7 +24,7 @@ export default async function build (dir) {
   del(buildDir, {force: true})
 }
 
-function runCompiler (compiler) {
+function runCompiler(compiler) {
   return new Promise((resolve, reject) => {
     compiler.run((err, stats) => {
       if (err) {
@@ -44,7 +44,7 @@ function runCompiler (compiler) {
   })
 }
 
-async function writeBuildId (dir) {
+async function writeBuildId(dir) {
   const buildIdPath = join(dir, '.zefir', 'BUILD_ID')
   const buildId = uuid.v4()
   await fs.writeFile(buildIdPath, buildId, 'utf8')

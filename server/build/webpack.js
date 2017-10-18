@@ -31,15 +31,17 @@ const defaultPage = join(__dirname, '..', 'index.html')
 //   return [join(nextPagesDir, p), `dist/pages/${p}`]
 // }))
 
-export default async function createCompiler (dir, {dev = false, quiet = false, buildDir} = {}) {
+export default async function createCompiler(
+  dir,
+  {dev = false, quiet = false, buildDir} = {}
+) {
   dir = resolve(dir)
 
   const projectNodeModules = join(dir, 'node_modules')
   const zefirNodeModules = join(__dirname, '..', '..', '..', './node_modules')
-  let defaultEntries = dev ? [
-    'react-hot-loader/patch',
-    'webpack-hot-middleware/client'
-  ] : []
+  let defaultEntries = dev
+    ? ['react-hot-loader/patch', 'webpack-hot-middleware/client']
+    : []
 
   let minChunks
 
@@ -105,7 +107,7 @@ export default async function createCompiler (dir, {dev = false, quiet = false, 
     new webpack.optimize.CommonsChunkPlugin({
       name: 'commons',
       filename: 'commons.js',
-      minChunks (module, count) {
+      minChunks(module, count) {
         // NOTE: it depends on the fact that the entry funtion is always called
         // before applying CommonsChunkPlugin
         return count >= minChunks
@@ -150,7 +152,7 @@ export default async function createCompiler (dir, {dev = false, quiet = false, 
       filename: '[name]',
       publicPath: '/',
       strictModuleExceptionHandling: true,
-      devtoolModuleFilenameTemplate ({resourcePath}) {
+      devtoolModuleFilenameTemplate({resourcePath}) {
         const hash = createHash('sha1')
         hash.update(String(Date.now()))
         const id = hash.digest('hex').slice(0, 7)
@@ -160,24 +162,22 @@ export default async function createCompiler (dir, {dev = false, quiet = false, 
       }
     },
     resolve: {
-      modules: [
-        paths.appSrc,
-        projectNodeModules,
-        zefirNodeModules
-      ],
+      modules: [paths.appSrc, projectNodeModules, zefirNodeModules],
       alias: {
         _SRC_: join(dir, 'src'),
-        'zefir/head': require.resolve(join(__dirname, '..', '..', 'lib', 'head')),
-        'zefir/utils': require.resolve(join(__dirname, '..', '..', 'lib', 'utils')),
-        'zefir/router': require.resolve(join(__dirname, '..', '..', 'lib', 'router'))
+        'zefir/head': require.resolve(
+          join(__dirname, '..', '..', 'lib', 'head')
+        ),
+        'zefir/utils': require.resolve(
+          join(__dirname, '..', '..', 'lib', 'utils')
+        ),
+        'zefir/router': require.resolve(
+          join(__dirname, '..', '..', 'lib', 'router')
+        )
       }
     },
     resolveLoader: {
-      modules: [
-        paths.appSrc,
-        projectNodeModules,
-        zefirNodeModules
-      ]
+      modules: [paths.appSrc, projectNodeModules, zefirNodeModules]
     },
     plugins,
     module: {
@@ -202,7 +202,7 @@ export default async function createCompiler (dir, {dev = false, quiet = false, 
 
   if (config.webpack) {
     console.log('> Using "webpack" config function defined in zefir.config.js.')
-    webpackConfig = await config.webpack(webpackConfig, { dev })
+    webpackConfig = await config.webpack(webpackConfig, {dev})
   }
 
   return webpack(webpackConfig)

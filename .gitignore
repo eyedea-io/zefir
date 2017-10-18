@@ -1,6 +1,16 @@
+# build output
+dist
+.zefir
+
+# dependencies
 node_modules
-packages/zefir-boilerplate
-packages/zefir-example-basic
-packages/zefir-test
-*.log
+
+# logs
+npm-debug.log
+
+# coverage
+.nyc_output
+coverage
+
+# config
 .vscode

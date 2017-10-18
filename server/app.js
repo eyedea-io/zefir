@@ -28,7 +28,7 @@ req
   })
 
 export default class App extends Component {
-  render () {
+  render() {
     return (
       <Router>
         <Provider stores={stores} services={services}>

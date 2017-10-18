@@ -1,7 +1,7 @@
 import {join} from 'path'
 import mv from 'mv'
 
-export default async function replaceCurrentBuild (dir, buildDir) {
+export default async function replaceCurrentBuild(dir, buildDir) {
   const _dir = join(dir, '.zefir')
   const _buildDir = join(buildDir, '.zefir')
   const oldDir = join(buildDir, '.zefir.old')
@@ -17,7 +17,8 @@ export default async function replaceCurrentBuild (dir, buildDir) {
   return oldDir
 }
 
-function move (from, to) {
+function move(from, to) {
   return new Promise((resolve, reject) =>
-    mv(from, to, err => err ? reject(err) : resolve()))
+    mv(from, to, err => (err ? reject(err) : resolve()))
+  )
 }
