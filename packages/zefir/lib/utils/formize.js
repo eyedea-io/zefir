@@ -47,9 +47,7 @@ export default function formize ({
       _watch (obj, key, twoWayDataBinding = true) {
         const value = observable(get(obj, key, ''))
 
-        observe(obj, change => {
-          value.set(get(obj, key, ''))
-        })
+        observe(obj, change => value.set(get(obj, key, '')))
 
         if (twoWayDataBinding) {
           observe(value, change => set(obj, key, change.newValue))
