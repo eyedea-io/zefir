@@ -66,7 +66,7 @@
     "minimist": "1.2.0",
     "mkdirp-then": "1.2.0",
     "mobx": "^3.3.1",
-    "mobx-react": "^4.2.2",
+    "mobx-react": "^4.3.3",
     "mv": "2.1.1",
     "mz": "2.7.0",
     "pkg-up": "^2.0.0",
