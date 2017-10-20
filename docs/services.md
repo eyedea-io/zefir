@@ -3,7 +3,7 @@ Service is a class containing actions that operate on stores.
 
 **Creating services**
 
-Every file in `src/**` directory ending with `.service.js` is accessible by every `connected` component. Go to [Connected Components](#connected-components) to learn more. 
+Every file in `src/**` directory ending with `.service.js` is accessible by every `connected` component. Go to [Connected Components](/docs/README.md#connected-components) to learn more. 
 
 ```js
 // tasks.service.js
