@@ -16,15 +16,13 @@
     "utils.js"
   ],
   "scripts": {
-    "build": "taskr",
-    "release": "taskr release",
-    "prepublish": "npm run release",
+    "prepublish": "taskr release",
     "precommit": "lint-staged",
+    "build": "taskr",
     "lint": "standard --fix --env mocha --parser babel-eslint",
     "format": "prettier --write --single-quote --no-semi --no-bracket-spacing *.js {bin,lib,server}/**/*.js",
-    "release:patch": "npm version patch -m \"chore: bump version to %s\" && git push --tags && git push && release",
-    "release:minor": "npm version minor -m \"chore: bump version to %s\" && git push --tags && git push && release",
-    "release:major": "npm version major -m \"chore: bump version to %s\" && git push --tags && git push && release"
+    "release:pre": "git push --tags && release --pre --publish",
+    "release": "git push --tags && release --publish"
   },
   "lint-staged": {
     "*.js": [
