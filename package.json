@@ -21,7 +21,7 @@
     "build": "taskr",
     "lint": "standard --fix --env mocha --parser babel-eslint",
     "format": "prettier --write --single-quote --no-semi --no-bracket-spacing *.js {bin,lib,server}/**/*.js",
-    "release": "git push --tags && git push && release --publish"
+    "release": "git push --tags && git push && release"
   },
   "lint-staged": {
     "*.js": [
