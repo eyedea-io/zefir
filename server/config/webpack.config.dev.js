@@ -2,6 +2,7 @@ import {join} from 'path'
 import webpack from 'webpack'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import FriendlyErrorsWebpackPlugin from 'friendly-errors-webpack-plugin'
+import CopyWebpackPlugin from 'copy-webpack-plugin'
 import paths from './paths'
 import env from './env'
 import getBabelConfig from '../build/babel/get-config'
@@ -78,6 +79,13 @@ module.exports = {
         messages: ['Live at: http://localhost:3000']
       }
     }),
+    new CopyWebpackPlugin([
+      {
+        context: join(dir, 'src/static'),
+        from: '**/*',
+        to: 'static'
+      }
+    ]),
     new webpack.NamedModulesPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.LoaderOptionsPlugin({
