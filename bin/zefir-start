@@ -46,11 +46,6 @@ if (argv.help) {
 
 const dir = resolve(argv._[0] || '.')
 
-if (!existsSync(resolve(dir, '.zefir', 'BUILD_ID'))) {
-  console.error(`> Could not find a valid build in the '.zefir' directory! Try building your app with 'zefir build' before starting the server.`)
-  process.exit(1)
-}
-
 const srv = express()
 const outputPath = resolve(argv._[0] || '.zefir')
 const publicPath = '/'
